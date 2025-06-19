@@ -55,7 +55,7 @@ export const Exploration: CollectionConfig = {
       defaultLimit: 10,
       limits: [10, 20, 50],
     },
-    defaultColumns: ['name', 'image', 'active', 'description'],
+    defaultColumns: ['name', 'active', 'description'],
     group: 'Margaretta Collections',
   },
 }

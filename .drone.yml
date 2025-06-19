@@ -1,0 +1,28 @@
+kind: pipeline
+type: docker
+name: web-portfolio-v2
+
+clone:
+  disable: true
+
+steps:
+  - name: Deploy
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: vps_ip
+      username:
+        from_secret: ssh_user
+      port:
+        from_secret: ssh_port
+      key:
+        from_secret: ssh_private_key
+      script:
+        - cd ~/app/payload
+        - git pull origin master
+
+trigger:
+  event:
+    - push
+  branch:
+    - master

@@ -74,7 +74,7 @@ export const WorkExperience: CollectionConfig = {
     },
     defaultColumns: [
       'position',
-      'image',
+      // 'image',
       'organization',
       'active',
       'startDate',

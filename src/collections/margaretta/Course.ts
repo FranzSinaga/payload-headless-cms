@@ -60,7 +60,7 @@ export const Course: CollectionConfig = {
       defaultLimit: 10,
       limits: [10, 20, 50],
     },
-    defaultColumns: ['courseName', 'image', 'courseType', 'active', 'periode'],
+    defaultColumns: ['courseName', 'courseType', 'active', 'periode'],
     group: 'Margaretta Collections',
   },
 }

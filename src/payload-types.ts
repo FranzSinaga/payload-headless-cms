@@ -70,6 +70,8 @@ export interface Config {
     'blogs-franzsinaga': BlogsFranzsinaga;
     users: User;
     media: Media;
+    'etta-work-experience': EttaWorkExperience;
+    'etta-projects': EttaProject;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,6 +81,8 @@ export interface Config {
     'blogs-franzsinaga': BlogsFranzsinagaSelect<false> | BlogsFranzsinagaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'etta-work-experience': EttaWorkExperienceSelect<false> | EttaWorkExperienceSelect<true>;
+    'etta-projects': EttaProjectsSelect<false> | EttaProjectsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -181,6 +185,94 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-work-experience".
+ */
+export interface EttaWorkExperience {
+  id: number;
+  active?: boolean | null;
+  position: string;
+  organization: string;
+  location?: string | null;
+  startDate: string;
+  endDate: string;
+  responsibilities?: TextFieldBlock[] | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextFieldBlock".
+ */
+export interface TextFieldBlock {
+  textField?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'text-field-block';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-projects".
+ */
+export interface EttaProject {
+  id: number;
+  active?: boolean | null;
+  projectName: string;
+  projectType: 'Website' | 'Mobile';
+  role: string;
+  description: string;
+  tags?:
+    | (
+        | 'Taiga'
+        | 'Postman'
+        | 'MySQL'
+        | 'Google Sheet'
+        | 'TEMAN'
+        | 'Jira'
+        | 'Confluence'
+        | 'Swagger'
+        | 'DBeaver'
+        | 'Spreadsheet'
+        | 'Microsoft Office'
+      )[]
+    | null;
+  detail?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -197,6 +289,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'etta-work-experience';
+        value: number | EttaWorkExperience;
+      } | null)
+    | ({
+        relationTo: 'etta-projects';
+        value: number | EttaProject;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -274,6 +374,67 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-work-experience_select".
+ */
+export interface EttaWorkExperienceSelect<T extends boolean = true> {
+  active?: T;
+  position?: T;
+  organization?: T;
+  location?: T;
+  startDate?: T;
+  endDate?: T;
+  responsibilities?:
+    | T
+    | {
+        'text-field-block'?: T | TextFieldBlockSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TextFieldBlock_select".
+ */
+export interface TextFieldBlockSelect<T extends boolean = true> {
+  textField?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-projects_select".
+ */
+export interface EttaProjectsSelect<T extends boolean = true> {
+  active?: T;
+  projectName?: T;
+  projectType?: T;
+  role?: T;
+  description?: T;
+  tags?: T;
+  detail?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

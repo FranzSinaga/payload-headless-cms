@@ -28,7 +28,9 @@ import sharp from 'sharp'
 // Collection
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { Blogs } from './collections/Blogs'
+import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
+import { WorkExperience as EthaWorkExperience } from './collections/margaretta/WorkExperience'
+import { Projects as EthaProjects } from './collections/margaretta/Projects'
 
 import { CodeBlock } from './blocks/CodeBlock'
 
@@ -42,7 +44,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Blogs, Users, Media],
+  collections: [FranzSinagaBlogs, Users, Media, EthaWorkExperience, EthaProjects],
   editor: lexicalEditor({
     features: ({}) => [
       FixedToolbarFeature(),
@@ -80,4 +82,9 @@ export default buildConfig({
     // storage-adapter-placeholder
   ],
   cors: ['http://localhost:3001', 'https://franzsinaga.com'],
+  upload: {
+    limits: {
+      fileSize: 5000000, // 5MB, written in bytes
+    },
+  },
 })

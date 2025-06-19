@@ -18,6 +18,12 @@ export const WorkExperience: CollectionConfig = {
       defaultValue: false,
     },
     {
+      name: 'image',
+      type: 'upload',
+      label: 'Thumbnail Image',
+      relationTo: 'etta-media',
+    },
+    {
       name: 'position',
       label: 'Position',
       type: 'text',
@@ -66,13 +72,15 @@ export const WorkExperience: CollectionConfig = {
       defaultLimit: 10,
       limits: [10, 20, 50],
     },
-    defaultColumns: ['position', 'organization', 'active', 'startDate', 'endDate', 'filename'],
+    defaultColumns: [
+      'position',
+      'image',
+      'organization',
+      'active',
+      'startDate',
+      'endDate',
+      'filename',
+    ],
     group: 'Margaretta Collections',
-  },
-  defaultSort: ['-startDate'],
-  upload: {
-    mimeTypes: ['image/*'],
-    filesRequiredOnCreate: false,
-    staticDir: './media/etta-work-experience',
   },
 }

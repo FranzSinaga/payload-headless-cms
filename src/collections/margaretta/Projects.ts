@@ -17,6 +17,12 @@ export const Projects: CollectionConfig = {
       defaultValue: false,
     },
     {
+      name: 'image',
+      type: 'upload',
+      label: 'Thumbnail Image',
+      relationTo: 'etta-media',
+    },
+    {
       name: 'projectName',
       label: 'Project Name',
       type: 'text',
@@ -73,11 +79,5 @@ export const Projects: CollectionConfig = {
     },
     defaultColumns: ['projectName', 'projectType', 'role', 'active', 'filename'],
     group: 'Margaretta Collections',
-  },
-  upload: {
-    mimeTypes: ['image/*'],
-    filesRequiredOnCreate: false,
-    displayPreview: true,
-    staticDir: './media/etta-projects',
   },
 }

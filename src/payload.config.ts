@@ -29,8 +29,13 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
+
+// Margaretta Colection
+import { MargarettaMedia } from './collections/margaretta/Media'
 import { WorkExperience as EthaWorkExperience } from './collections/margaretta/WorkExperience'
+import { Course as EthaCourse } from './collections/margaretta/Course'
 import { Projects as EthaProjects } from './collections/margaretta/Projects'
+import { Exploration as EthaExploration } from './collections/margaretta/Exploration'
 
 import { CodeBlock } from './blocks/CodeBlock'
 
@@ -39,12 +44,25 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    avatar: 'gravatar',
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [FranzSinagaBlogs, Users, Media, EthaWorkExperience, EthaProjects],
+  collections: [
+    // Global Collection
+    Users,
+    Media,
+    // Margaretta
+    MargarettaMedia,
+    EthaWorkExperience,
+    EthaProjects,
+    EthaCourse,
+    EthaExploration,
+    // franzsinaga.com
+    FranzSinagaBlogs,
+  ],
   editor: lexicalEditor({
     features: ({}) => [
       FixedToolbarFeature(),

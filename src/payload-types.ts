@@ -67,22 +67,28 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    'blogs-franzsinaga': BlogsFranzsinaga;
     users: User;
     media: Media;
+    'etta-media': EttaMedia;
     'etta-work-experience': EttaWorkExperience;
     'etta-projects': EttaProject;
+    'etta-course': EttaCourse;
+    'etta-exploration': EttaExploration;
+    'blogs-franzsinaga': BlogsFranzsinaga;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
-    'blogs-franzsinaga': BlogsFranzsinagaSelect<false> | BlogsFranzsinagaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'etta-media': EttaMediaSelect<false> | EttaMediaSelect<true>;
     'etta-work-experience': EttaWorkExperienceSelect<false> | EttaWorkExperienceSelect<true>;
     'etta-projects': EttaProjectsSelect<false> | EttaProjectsSelect<true>;
+    'etta-course': EttaCourseSelect<false> | EttaCourseSelect<true>;
+    'etta-exploration': EttaExplorationSelect<false> | EttaExplorationSelect<true>;
+    'blogs-franzsinaga': BlogsFranzsinagaSelect<false> | BlogsFranzsinagaSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -118,34 +124,6 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs-franzsinaga".
- */
-export interface BlogsFranzsinaga {
-  id: number;
-  slug: string;
-  isPublished?: boolean | null;
-  title: string;
-  excerpt?: string | null;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -185,17 +163,11 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "etta-work-experience".
+ * via the `definition` "etta-media".
  */
-export interface EttaWorkExperience {
+export interface EttaMedia {
   id: number;
-  active?: boolean | null;
-  position: string;
-  organization: string;
-  location?: string | null;
-  startDate: string;
-  endDate: string;
-  responsibilities?: TextFieldBlock[] | null;
+  alt: string;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -207,6 +179,23 @@ export interface EttaWorkExperience {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-work-experience".
+ */
+export interface EttaWorkExperience {
+  id: number;
+  active?: boolean | null;
+  image?: (number | null) | EttaMedia;
+  position: string;
+  organization: string;
+  location?: string | null;
+  startDate: string;
+  endDate: string;
+  responsibilities?: TextFieldBlock[] | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -225,6 +214,7 @@ export interface TextFieldBlock {
 export interface EttaProject {
   id: number;
   active?: boolean | null;
+  image?: (number | null) | EttaMedia;
   projectName: string;
   projectType: 'Website' | 'Mobile';
   role: string;
@@ -261,15 +251,76 @@ export interface EttaProject {
   } | null;
   updatedAt: string;
   createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-course".
+ */
+export interface EttaCourse {
+  id: number;
+  active?: boolean | null;
+  image: number | EttaMedia;
+  courseName: string;
+  courseType: string;
+  periode?: string | null;
+  description?: string | null;
+  links?: LinkBlock[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkBlock".
+ */
+export interface LinkBlock {
+  text: string;
+  url: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'link-block';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-exploration".
+ */
+export interface EttaExploration {
+  id: number;
+  active?: boolean | null;
+  image: number | EttaMedia;
+  name: string;
+  appLink: string;
+  description: string;
+  links?: LinkBlock[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogs-franzsinaga".
+ */
+export interface BlogsFranzsinaga {
+  id: number;
+  slug: string;
+  isPublished?: boolean | null;
+  title: string;
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -279,10 +330,6 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'blogs-franzsinaga';
-        value: number | BlogsFranzsinaga;
-      } | null)
-    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -291,12 +338,28 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'etta-media';
+        value: number | EttaMedia;
+      } | null)
+    | ({
         relationTo: 'etta-work-experience';
         value: number | EttaWorkExperience;
       } | null)
     | ({
         relationTo: 'etta-projects';
         value: number | EttaProject;
+      } | null)
+    | ({
+        relationTo: 'etta-course';
+        value: number | EttaCourse;
+      } | null)
+    | ({
+        relationTo: 'etta-exploration';
+        value: number | EttaExploration;
+      } | null)
+    | ({
+        relationTo: 'blogs-franzsinaga';
+        value: number | BlogsFranzsinaga;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -342,19 +405,6 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs-franzsinaga_select".
- */
-export interface BlogsFranzsinagaSelect<T extends boolean = true> {
-  slug?: T;
-  isPublished?: T;
-  title?: T;
-  excerpt?: T;
-  content?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -388,10 +438,29 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-media_select".
+ */
+export interface EttaMediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "etta-work-experience_select".
  */
 export interface EttaWorkExperienceSelect<T extends boolean = true> {
   active?: T;
+  image?: T;
   position?: T;
   organization?: T;
   location?: T;
@@ -404,15 +473,6 @@ export interface EttaWorkExperienceSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -429,6 +489,7 @@ export interface TextFieldBlockSelect<T extends boolean = true> {
  */
 export interface EttaProjectsSelect<T extends boolean = true> {
   active?: T;
+  image?: T;
   projectName?: T;
   projectType?: T;
   role?: T;
@@ -437,15 +498,66 @@ export interface EttaProjectsSelect<T extends boolean = true> {
   detail?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-course_select".
+ */
+export interface EttaCourseSelect<T extends boolean = true> {
+  active?: T;
+  image?: T;
+  courseName?: T;
+  courseType?: T;
+  periode?: T;
+  description?: T;
+  links?:
+    | T
+    | {
+        'link-block'?: T | LinkBlockSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkBlock_select".
+ */
+export interface LinkBlockSelect<T extends boolean = true> {
+  text?: T;
   url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "etta-exploration_select".
+ */
+export interface EttaExplorationSelect<T extends boolean = true> {
+  active?: T;
+  image?: T;
+  name?: T;
+  appLink?: T;
+  description?: T;
+  links?:
+    | T
+    | {
+        'link-block'?: T | LinkBlockSelect<T>;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogs-franzsinaga_select".
+ */
+export interface BlogsFranzsinagaSelect<T extends boolean = true> {
+  slug?: T;
+  isPublished?: T;
+  title?: T;
+  excerpt?: T;
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

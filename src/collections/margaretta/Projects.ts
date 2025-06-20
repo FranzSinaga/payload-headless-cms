@@ -62,7 +62,6 @@ export const Projects: CollectionConfig = {
         'Spreadsheet',
         'Microsoft Office',
       ],
-      // enumName: 'etta_projects_tags',
       hasMany: true,
     },
     {

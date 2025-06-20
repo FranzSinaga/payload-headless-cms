@@ -64,7 +64,8 @@ export default buildConfig({
     FranzSinagaBlogs,
   ],
   editor: lexicalEditor({
-    features: ({}) => [
+    features: () => [
+      // ...defaultFeatures,
       FixedToolbarFeature(),
       BlocksFeature({
         blocks: [CodeBlock],

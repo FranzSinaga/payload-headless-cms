@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { TextFieldBlock } from '@/blocks/TextFieldBlock'
 import { LinkBlock } from '@/blocks/LinkBlock'
 
 export const Course: CollectionConfig = {

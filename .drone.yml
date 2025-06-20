@@ -20,6 +20,8 @@ steps:
       script:
         - cd ~/app/payload
         - git pull origin master
+        - docker compose down
+        - docker compose up -d --build
 
 trigger:
   event:

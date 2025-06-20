@@ -5,9 +5,9 @@ import { CodeField, useFormFields } from '@payloadcms/ui'
 import React, { useMemo } from 'react'
 import { languages } from '@/lib/const'
 
-const languageKeyToMonacoLanguageMap = languages
+// const languageKeyToMonacoLanguageMap = languages
 
-type Language = keyof typeof languageKeyToMonacoLanguageMap
+type Language = keyof typeof languages
 
 export const Code: React.FC<CodeFieldClientProps> = ({
   autoComplete,

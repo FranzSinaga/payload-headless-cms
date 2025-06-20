@@ -100,7 +100,7 @@ export default buildConfig({
     payloadCloudPlugin(),
     // storage-adapter-placeholder
   ],
-  cors: ['http://localhost:3001', 'https://franzsinaga.com'],
+  cors: '*',
   upload: {
     limits: {
       fileSize: 5000000, // 5MB, written in bytes

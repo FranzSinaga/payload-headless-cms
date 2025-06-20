@@ -50,6 +50,9 @@ RUN adduser --system --uid 1001 nextjs
 
 # COPY --from=builder /app/public ./public
 
+# Siapkan folder media
+RUN mkdir -p /app/media && chown -R nextjs:nodejs /app/media
+
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next

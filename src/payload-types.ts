@@ -74,7 +74,8 @@ export interface Config {
     'etta-projects': EttaProject;
     'etta-course': EttaCourse;
     'etta-exploration': EttaExploration;
-    'blogs-franzsinaga': BlogsFranzsinaga;
+    'franz-media': FranzMedia;
+    'franz-blogs': FranzBlog;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -88,7 +89,8 @@ export interface Config {
     'etta-projects': EttaProjectsSelect<false> | EttaProjectsSelect<true>;
     'etta-course': EttaCourseSelect<false> | EttaCourseSelect<true>;
     'etta-exploration': EttaExplorationSelect<false> | EttaExplorationSelect<true>;
-    'blogs-franzsinaga': BlogsFranzsinagaSelect<false> | BlogsFranzsinagaSelect<true>;
+    'franz-media': FranzMediaSelect<false> | FranzMediaSelect<true>;
+    'franz-blogs': FranzBlogsSelect<false> | FranzBlogsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -296,9 +298,28 @@ export interface EttaExploration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs-franzsinaga".
+ * via the `definition` "franz-media".
  */
-export interface BlogsFranzsinaga {
+export interface FranzMedia {
+  id: number;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franz-blogs".
+ */
+export interface FranzBlog {
   id: number;
   slug: string;
   isPublished?: boolean | null;
@@ -358,8 +379,12 @@ export interface PayloadLockedDocument {
         value: number | EttaExploration;
       } | null)
     | ({
-        relationTo: 'blogs-franzsinaga';
-        value: number | BlogsFranzsinaga;
+        relationTo: 'franz-media';
+        value: number | FranzMedia;
+      } | null)
+    | ({
+        relationTo: 'franz-blogs';
+        value: number | FranzBlog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -548,9 +573,27 @@ export interface EttaExplorationSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blogs-franzsinaga_select".
+ * via the `definition` "franz-media_select".
  */
-export interface BlogsFranzsinagaSelect<T extends boolean = true> {
+export interface FranzMediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franz-blogs_select".
+ */
+export interface FranzBlogsSelect<T extends boolean = true> {
   slug?: T;
   isPublished?: T;
   title?: T;
@@ -663,6 +706,16 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code-block';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "UploadBlock".
+ */
+export interface UploadBlock {
+  upload?: (number | null) | FranzMedia;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'upload-block';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

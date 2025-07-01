@@ -28,9 +28,12 @@ import sharp from 'sharp'
 // Collection
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
 
-// Margaretta Colection
+// Franz Collections
+import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
+import { FranzMedia } from './collections/franzsinaga/Media'
+
+// Margaretta Colections
 import { MargarettaMedia } from './collections/margaretta/Media'
 import { WorkExperience as EthaWorkExperience } from './collections/margaretta/WorkExperience'
 import { Course as EthaCourse } from './collections/margaretta/Course'
@@ -54,38 +57,17 @@ export default buildConfig({
     // Global Collection
     Users,
     Media,
-    // Margaretta
+    // Margaretta Collections
     MargarettaMedia,
     EthaWorkExperience,
     EthaProjects,
     EthaCourse,
     EthaExploration,
-    // franzsinaga.com
+    // Franz Collections
+    FranzMedia,
     FranzSinagaBlogs,
   ],
-  editor: lexicalEditor({
-    features: () => [
-      // ...defaultFeatures,
-      FixedToolbarFeature(),
-      BlocksFeature({
-        blocks: [CodeBlock],
-        inlineBlocks: [],
-      }),
-      BoldFeature(),
-      ItalicFeature(),
-      UnderlineFeature(),
-      StrikethroughFeature(),
-      ParagraphFeature(),
-      HeadingFeature(),
-      UnorderedListFeature(),
-      OrderedListFeature(),
-      LinkFeature(),
-      BlockquoteFeature(),
-      UploadFeature(),
-      HorizontalRuleFeature(),
-      InlineCodeFeature(),
-    ],
-  }),
+  editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

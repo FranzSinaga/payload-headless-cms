@@ -1,8 +1,12 @@
+import { CodeBlock } from '@/blocks/CodeBlock'
+import { createUploadBlock } from '@/blocks/UploadBlock'
+import { richTextDefaultProps } from '@/lib/richtext-default'
+import { BlocksFeature, lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 import slugify from 'slugify'
 
 export const Blogs: CollectionConfig = {
-  slug: 'blogs-franzsinaga',
+  slug: 'franz-blogs',
   labels: {
     plural: 'Blogs',
     singular: 'Blog',
@@ -41,6 +45,15 @@ export const Blogs: CollectionConfig = {
       label: 'Content',
       type: 'richText',
       required: true,
+      editor: lexicalEditor({
+        features: () => [
+          ...richTextDefaultProps,
+          BlocksFeature({
+            blocks: [CodeBlock, createUploadBlock('franz-media')],
+            inlineBlocks: [],
+          }),
+        ],
+      }),
     },
   ],
   hooks: {
@@ -61,6 +74,6 @@ export const Blogs: CollectionConfig = {
       limits: [10, 20, 50],
     },
     defaultColumns: ['title', 'excerpt', 'isPublished'],
-    group: 'Franz Sinaga Collections',
+    group: 'Franz Collections',
   },
 }

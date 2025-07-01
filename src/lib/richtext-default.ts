@@ -1,0 +1,32 @@
+import {
+  BlockquoteFeature,
+  BoldFeature,
+  FixedToolbarFeature,
+  HeadingFeature,
+  HorizontalRuleFeature,
+  InlineCodeFeature,
+  ItalicFeature,
+  LinkFeature,
+  OrderedListFeature,
+  ParagraphFeature,
+  StrikethroughFeature,
+  UnderlineFeature,
+  UnorderedListFeature,
+} from '@payloadcms/richtext-lexical'
+
+export const richTextDefaultProps = [
+  FixedToolbarFeature(),
+  BoldFeature(),
+  ItalicFeature(),
+  UnderlineFeature(),
+  StrikethroughFeature(),
+  ParagraphFeature(),
+  HeadingFeature(),
+  UnorderedListFeature(),
+  OrderedListFeature(),
+  LinkFeature(),
+  BlockquoteFeature(),
+  // UploadFeature(),
+  HorizontalRuleFeature(),
+  InlineCodeFeature(),
+]

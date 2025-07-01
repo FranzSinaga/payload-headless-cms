@@ -1,3 +1,7 @@
+import { CodeBlock } from '@/blocks/CodeBlock'
+import { createUploadBlock } from '@/blocks/UploadBlock'
+import { richTextDefaultProps } from '@/lib/richtext-default'
+import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 
 export const Projects: CollectionConfig = {
@@ -68,6 +72,15 @@ export const Projects: CollectionConfig = {
       name: 'detail',
       type: 'richText',
       label: 'Details Projects',
+      editor: lexicalEditor({
+        features: () => [
+          ...richTextDefaultProps,
+          BlocksFeature({
+            blocks: [CodeBlock, createUploadBlock('franz-media')],
+            inlineBlocks: [],
+          }),
+        ],
+      }),
     },
   ],
   admin: {

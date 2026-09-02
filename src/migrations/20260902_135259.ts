@@ -2,8 +2,16 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
+   DO $$ BEGIN
    CREATE TYPE "public"."enum_etta_projects_tags" AS ENUM('Taiga', 'Postman', 'MySQL', 'Google Sheet', 'TEMAN', 'Jira', 'Confluence', 'Swagger', 'DBeaver', 'Spreadsheet', 'Microsoft Office');
-  CREATE TYPE "public"."enum_etta_projects_project_type" AS ENUM('Website', 'Mobile');
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  DO $$ BEGIN
+   CREATE TYPE "public"."enum_etta_projects_project_type" AS ENUM('Website', 'Mobile');
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
   CREATE TABLE IF NOT EXISTS "users" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,

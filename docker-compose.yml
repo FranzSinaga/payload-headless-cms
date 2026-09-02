@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: payload-cms
     ports:
-      - '4000:3000'
+      - '127.0.0.1:5000:3000'
     volumes:
       - ./media:/app/media
       - .:/home/node/app

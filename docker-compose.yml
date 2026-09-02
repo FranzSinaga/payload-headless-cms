@@ -22,20 +22,6 @@ services:
       - pgsql
       - net-payload-cms
 
-  migrate:
-    build:
-      dockerfile: Dockerfile
-      target: builder
-    container_name: payload-migrate
-    command: pnpm payload migrate
-    env_file:
-      - .env.production
-    networks:
-      - pgsql
-      - net-payload-cms
-    profiles:
-      - tools
-
 volumes:
   data:
 

@@ -32,6 +32,7 @@ import { Media } from './collections/Media'
 // Franz Collections
 import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
 import { FranzMedia } from './collections/franzsinaga/Media'
+import { WorkExperience as FranzWorkExperience } from './collections/franzsinaga/WorkExperience'
 
 // Margaretta Colections
 import { MargarettaMedia } from './collections/margaretta/Media'
@@ -66,6 +67,7 @@ export default buildConfig({
     // Franz Collections
     FranzMedia,
     FranzSinagaBlogs,
+    FranzWorkExperience,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

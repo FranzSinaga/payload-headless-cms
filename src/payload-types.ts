@@ -76,6 +76,7 @@ export interface Config {
     'etta-exploration': EttaExploration;
     'franz-media': FranzMedia;
     'franz-blogs': FranzBlog;
+    'franz-work-experience': FranzWorkExperience;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +92,7 @@ export interface Config {
     'etta-exploration': EttaExplorationSelect<false> | EttaExplorationSelect<true>;
     'franz-media': FranzMediaSelect<false> | FranzMediaSelect<true>;
     'franz-blogs': FranzBlogsSelect<false> | FranzBlogsSelect<true>;
+    'franz-work-experience': FranzWorkExperienceSelect<false> | FranzWorkExperienceSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -345,6 +347,23 @@ export interface FranzBlog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franz-work-experience".
+ */
+export interface FranzWorkExperience {
+  id: number;
+  active?: boolean | null;
+  position: string;
+  organization: string;
+  location?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  untilNow?: boolean | null;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -385,6 +404,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'franz-blogs';
         value: number | FranzBlog;
+      } | null)
+    | ({
+        relationTo: 'franz-work-experience';
+        value: number | FranzWorkExperience;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -599,6 +622,22 @@ export interface FranzBlogsSelect<T extends boolean = true> {
   title?: T;
   excerpt?: T;
   content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "franz-work-experience_select".
+ */
+export interface FranzWorkExperienceSelect<T extends boolean = true> {
+  active?: T;
+  position?: T;
+  organization?: T;
+  location?: T;
+  startDate?: T;
+  endDate?: T;
+  untilNow?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
 }

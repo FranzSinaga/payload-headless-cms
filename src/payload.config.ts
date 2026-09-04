@@ -26,20 +26,20 @@ import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
 // Collection
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import { Users } from './collections/users'
+import { Media } from './collections/media'
 
 // Franz Collections
-import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/Blogs'
-import { FranzMedia } from './collections/franzsinaga/Media'
-import { WorkExperience as FranzWorkExperience } from './collections/franzsinaga/WorkExperience'
+import { Blogs as FranzSinagaBlogs } from './collections/franzsinaga/blogs'
+import { FranzMedia } from './collections/franzsinaga/media'
+import { WorkExperience as FranzWorkExperience } from './collections/franzsinaga/work-experience'
 
 // Margaretta Colections
-import { MargarettaMedia } from './collections/margaretta/Media'
-import { WorkExperience as EthaWorkExperience } from './collections/margaretta/WorkExperience'
-import { Course as EthaCourse } from './collections/margaretta/Course'
-import { Projects as EthaProjects } from './collections/margaretta/Projects'
-import { Exploration as EthaExploration } from './collections/margaretta/Exploration'
+import { MargarettaMedia } from './collections/margaretta/media'
+import { WorkExperience as EthaWorkExperience } from './collections/margaretta/work-experience'
+import { Course as EthaCourse } from './collections/margaretta/course'
+import { Projects as EthaProjects } from './collections/margaretta/projects'
+import { Exploration as EthaExploration } from './collections/margaretta/exploration'
 
 import { CodeBlock } from './blocks/CodeBlock'
 

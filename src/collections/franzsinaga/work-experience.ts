@@ -1,4 +1,6 @@
 import type { CollectionConfig } from 'payload'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { richTextDefaultProps } from '@/lib/richtext-default'
 
 export const WorkExperience: CollectionConfig = {
   slug: 'franz-work-experience',
@@ -53,9 +55,12 @@ export const WorkExperience: CollectionConfig = {
       defaultValue: false,
     },
     {
-      type: 'textarea',
       name: 'description',
+      type: 'richText',
       label: 'Description',
+      editor: lexicalEditor({
+        features: () => [...richTextDefaultProps],
+      }),
     },
   ],
   admin: {

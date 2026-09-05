@@ -1,0 +1,444 @@
+/* Hallmark · scope: payload-admin-theme · genre: atmospheric · theme: Lumen
+ * Drop 01 Night Foundry -> html[data-theme='dark']  (cool-violet canvas, molten-brass accent)
+ * Drop 02 Day Foundry   -> :root / light            (cool bone canvas, deep-indigo accent)
+ * axes: dark+light paper / classical-serif (Instrument Serif) / warm-brass + cool-indigo
+ * Retheme only — no component markup touched. Payload puts every one of its own
+ * rules inside @layer payload-default, so the unlayered rules below win outright.
+ * pre-emit critique: P5 H4 E4 S5 R4 V5
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ---- Lumen semantic tokens (Day Foundry) ------------------------------ */
+  --lumen-accent: oklch(50% 0.17 272); /* violet-indigo — refracts */
+  --lumen-accent-ink: oklch(97% 0.012 272); /* text riding on the accent */
+  --lumen-rule: oklch(30% 0.022 265 / 0.16); /* hairline */
+  --lumen-grid: oklch(30% 0.022 265 / 0.07); /* blueprint grid line */
+  --lumen-emit: oklch(50% 0.17 272 / 0.04); /* canvas wash under the grid */
+  --lumen-card-emit: oklch(50% 0.17 272 / 0.045);
+  --lumen-card-emit-hover: oklch(50% 0.17 272 / 0.1);
+  --lumen-ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Sidebar row states — fills, not underlines. */
+  --lumen-nav-hover: oklch(30% 0.022 265 / 0.06);
+  --lumen-nav-active: oklch(50% 0.17 272 / 0.1);
+  --lumen-nav-heading: oklch(44% 0.03 265); /* 7.03:1 on Day paper */
+  --lumen-nav-chevron: oklch(55% 0.03 265); /* 4.39:1 — a UI icon needs 3:1 */
+
+  /* Primary button — a neutral inversion, not a chromatic surface. On Day paper
+     the neutral that reads is the dark end of the ramp; cream would vanish. */
+  --lumen-btn-bg: oklch(30% 0.022 265);
+  --lumen-btn-ink: oklch(96.5% 0.014 265);
+  --lumen-btn-hover-bg: oklch(38% 0.024 265);
+
+  /* ---- Base ramp — cool-violet, hue 265 --------------------------------- */
+  /* Payload's dark mode re-indexes this same ramp from the opposite end, so one
+     ramp carries both drops: base-0 is Day paper AND Night ink; base-900 is
+     Night paper AND Day near-ink. See @payloadcms/ui/dist/scss/colors.scss.
+     Tuned for long sessions: the ends are pulled off pure white / pure black so
+     body text lands near 10:1 rather than the ~17:1 of paper-white on ink, and
+     chroma is carried at 0.014–0.028 so the neutrals read violet, not grey. */
+  --color-base-0: oklch(96.5% 0.014 265);
+  --color-base-50: oklch(93.5% 0.016 265);
+  --color-base-100: oklch(88% 0.016 265); /* Night body text */
+  --color-base-150: oklch(84.5% 0.018 265);
+  --color-base-200: oklch(81% 0.02 265);
+  --color-base-250: oklch(77.5% 0.022 265);
+  --color-base-300: oklch(72% 0.024 265);
+  --color-base-350: oklch(67% 0.026 265);
+  /* 400 is --theme-elevation-400 in light mode = table column headers. Held at
+     61.5% so that muted text clears 3:1 on Day paper; Payload's stock value
+     (~67%) sits at 2.8:1 and is the one legibility bug inherited from default. */
+  --color-base-400: oklch(61.5% 0.028 265);
+  --color-base-450: oklch(58% 0.028 265);
+  --color-base-500: oklch(54.5% 0.028 265);
+  --color-base-550: oklch(51% 0.028 265);
+  --color-base-600: oklch(47.5% 0.028 265);
+  --color-base-650: oklch(44% 0.026 265);
+  --color-base-700: oklch(40% 0.024 265);
+  --color-base-750: oklch(35% 0.022 265);
+  --color-base-800: oklch(30% 0.022 265); /* Day body text */
+  --color-base-850: oklch(23% 0.02 265);
+  --color-base-900: oklch(17.5% 0.018 265); /* Night paper */
+  --color-base-950: oklch(14% 0.016 265);
+  --color-base-1000: oklch(11% 0.016 265);
+
+  /* ---- Accent ramp (Day) — indigo, hue 272 ------------------------------ */
+  /* Payload's accent surfaces: focus ring, row selection, drag state, links.
+     Chroma pulled back from 0.24 to 0.17 — the old value glared on a full-width
+     button without buying any legibility. */
+  --color-success-50: oklch(96.5% 0.018 272);
+  --color-success-100: oklch(94% 0.032 272);
+  --color-success-150: oklch(90.5% 0.05 272);
+  --color-success-200: oklch(87% 0.065 272);
+  --color-success-250: oklch(82.5% 0.085 272);
+  --color-success-300: oklch(78% 0.105 272);
+  --color-success-350: oklch(73% 0.125 272);
+  --color-success-400: oklch(66% 0.145 272);
+  --color-success-450: oklch(58% 0.16 272);
+  --color-success-500: oklch(50% 0.17 272);
+  --color-success-550: oklch(46% 0.165 272);
+  --color-success-600: oklch(42% 0.155 272);
+  --color-success-650: oklch(38% 0.14 272);
+  --color-success-700: oklch(34% 0.125 272);
+  --color-success-750: oklch(30% 0.108 272);
+  --color-success-800: oklch(26% 0.09 272);
+  --color-success-850: oklch(22% 0.072 272);
+  --color-success-900: oklch(18% 0.055 272);
+  --color-success-950: oklch(14% 0.038 272);
+
+  /* Payload mirrors --color-blue-* onto the same values; keep them aliased in
+     case a component reads the blue scale directly. */
+  --color-blue-50: var(--color-success-50);
+  --color-blue-100: var(--color-success-100);
+  --color-blue-150: var(--color-success-150);
+  --color-blue-200: var(--color-success-200);
+  --color-blue-250: var(--color-success-250);
+  --color-blue-300: var(--color-success-300);
+  --color-blue-350: var(--color-success-350);
+  --color-blue-400: var(--color-success-400);
+  --color-blue-450: var(--color-success-450);
+  --color-blue-500: var(--color-success-500);
+  --color-blue-550: var(--color-success-550);
+  --color-blue-600: var(--color-success-600);
+  --color-blue-650: var(--color-success-650);
+  --color-blue-700: var(--color-success-700);
+  --color-blue-750: var(--color-success-750);
+  --color-blue-800: var(--color-success-800);
+  --color-blue-850: var(--color-success-850);
+  --color-blue-900: var(--color-success-900);
+  --color-blue-950: var(--color-success-950);
+
+  /* ---- Error ramp (Day) — coral chord, hue 18 --------------------------- */
+  /* Lumen's secondary chromatic. Replaces Payload's stock red so validation
+     sits in the same family as the accent instead of fighting it.
+     --theme-error-500 carries 20 of the 60 error usages (required asterisk,
+     validation text, error borders), so it is the index that has to read. */
+  --color-error-50: oklch(96.5% 0.016 18);
+  --color-error-100: oklch(94% 0.03 18);
+  --color-error-150: oklch(90.5% 0.05 18);
+  --color-error-200: oklch(87% 0.07 18);
+  --color-error-250: oklch(82.5% 0.095 18);
+  --color-error-300: oklch(78% 0.115 18);
+  --color-error-350: oklch(72% 0.14 18);
+  --color-error-400: oklch(65% 0.16 18);
+  --color-error-450: oklch(57% 0.175 18);
+  --color-error-500: oklch(50% 0.18 18);
+  --color-error-550: oklch(46% 0.172 18);
+  --color-error-600: oklch(42% 0.162 18);
+  --color-error-650: oklch(38% 0.148 18);
+  --color-error-700: oklch(34% 0.132 18);
+  --color-error-750: oklch(30% 0.115 18);
+  --color-error-800: oklch(26% 0.098 18);
+  --color-error-850: oklch(22% 0.08 18);
+  --color-error-900: oklch(18% 0.06 18);
+  --color-error-950: oklch(14% 0.042 18);
+
+  /* ---- Type — three families, Lumen's documented stack ------------------ */
+  --font-display: 'Instrument Serif', 'Tiempos Headline', ui-serif, Georgia, serif;
+  --font-body: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, Monaco, monospace;
+  --font-serif: var(--font-display);
+
+  /* Machined, not soft — Lumen reads as instrument-grade. */
+  --style-radius-s: 2px;
+  --style-radius-m: 4px;
+  --style-radius-l: 6px;
+
+  --accessibility-outline: 2px solid var(--lumen-accent);
+}
+
+html[data-theme='dark'] {
+  /* ---- Lumen semantic tokens (Night Foundry) ---------------------------- */
+  --lumen-accent: oklch(75% 0.135 56); /* brass — emits, without the glare */
+  --lumen-accent-ink: oklch(17.5% 0.018 265);
+  --lumen-rule: oklch(88% 0.016 265 / 0.14);
+  --lumen-grid: oklch(88% 0.016 265 / 0.05);
+  --lumen-emit: oklch(75% 0.135 56 / 0.05);
+  --lumen-card-emit: oklch(75% 0.135 56 / 0.05);
+  --lumen-card-emit-hover: oklch(75% 0.135 56 / 0.12);
+
+  --lumen-nav-hover: oklch(88% 0.016 265 / 0.07);
+  --lumen-nav-active: oklch(75% 0.135 56 / 0.13);
+  --lumen-nav-heading: oklch(76% 0.026 265); /* 8.83:1 on Night paper */
+  --lumen-nav-chevron: oklch(66% 0.028 265); /* 6.09:1 */
+
+  /* Cream, carrying just enough warmth (hue 85, chroma 0.02) to echo the brass
+     accent without becoming a chromatic surface of its own. */
+  --lumen-btn-bg: oklch(93% 0.02 85);
+  --lumen-btn-ink: oklch(17.5% 0.018 265);
+  --lumen-btn-hover-bg: oklch(97% 0.016 85);
+
+  /* ---- Accent ramp (Night) — brass, hue 56 ------------------------------ */
+  /* Light end first, same ordering as every Payload ramp: dark mode reads it
+     from the opposite end, so index 200–450 is what actually shows.
+     Nudged off hue 50 toward 56 and down to 0.135 chroma — at 0.17/H50 a
+     full-width button read as safety-orange against the dark canvas. */
+  --color-success-50: oklch(97% 0.016 56);
+  --color-success-100: oklch(94.5% 0.032 56);
+  --color-success-150: oklch(91% 0.055 56);
+  --color-success-200: oklch(87.5% 0.08 56);
+  --color-success-250: oklch(84% 0.105 56);
+  --color-success-300: oklch(79.5% 0.125 56);
+  --color-success-350: oklch(75% 0.135 56);
+  --color-success-400: oklch(71% 0.135 56);
+  --color-success-450: oklch(67% 0.13 56);
+  --color-success-500: oklch(62.5% 0.125 56);
+  --color-success-550: oklch(58% 0.118 56);
+  --color-success-600: oklch(53.5% 0.11 56);
+  --color-success-650: oklch(49% 0.1 56);
+  --color-success-700: oklch(44% 0.09 56);
+  --color-success-750: oklch(39% 0.078 56);
+  --color-success-800: oklch(34% 0.066 56);
+  --color-success-850: oklch(29% 0.054 56);
+  --color-success-900: oklch(23% 0.042 56);
+  --color-success-950: oklch(17% 0.03 56);
+
+  /* ---- Error ramp (Night) — coral chord, hue 18 ------------------------- */
+  /* Dark mode reads --theme-error-500 from --color-error-450, so the anchor
+     moves up the ramp: 450 carries Lumen's night coral oklch(68% 0.16 18). */
+  --color-error-50: oklch(97% 0.014 18);
+  --color-error-100: oklch(94.5% 0.028 18);
+  --color-error-150: oklch(91% 0.048 18);
+  --color-error-200: oklch(87.5% 0.07 18);
+  --color-error-250: oklch(84% 0.092 18);
+  --color-error-300: oklch(80% 0.115 18);
+  --color-error-350: oklch(76% 0.135 18);
+  --color-error-400: oklch(72% 0.15 18);
+  --color-error-450: oklch(68% 0.16 18);
+  --color-error-500: oklch(63.5% 0.163 18);
+  --color-error-550: oklch(59% 0.16 18);
+  --color-error-600: oklch(54.5% 0.153 18);
+  --color-error-650: oklch(50% 0.143 18);
+  --color-error-700: oklch(45% 0.13 18);
+  --color-error-750: oklch(40% 0.115 18);
+  --color-error-800: oklch(35% 0.1 18);
+  --color-error-850: oklch(30% 0.082 18);
+  --color-error-900: oklch(24% 0.064 18);
+  --color-error-950: oklch(18% 0.045 18);
+}
+
+/* ---- Two-register typography -------------------------------------------- */
+/* Lumen's signature: quiet lowercase prose against loud UPPERCASE mono labels.
+   Applied to chrome only — never to a field value or a document title, where
+   lowercasing would misrepresent stored data. */
+
+body {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Register 1 — lowercase prose, on config-supplied chrome. */
+.nav__link,
+.dashboard__label,
+.card__title,
+.list-header__title,
+.btn__label,
+.nav-group__toggle {
+  text-transform: none;
+}
+
+/* Register 2 — UPPERCASE mono, the machine readout. */
+.field-label,
+.table thead th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Display serif on the headline surfaces. Roman, weight 400 — Instrument Serif
+   has no italic in Lumen and carries emphasis through size alone. */
+.dashboard__label,
+.list-header__title,
+.render-title {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* ---- Primary button — neutral inversion ---------------------------------- */
+/* Deliberately NOT the accent. A full-width chromatic block is the loudest
+   thing on the page and the save/login button does not need to shout; the
+   accent stays on focus rings, selection and the active nav row. The button
+   inverts against its canvas instead: cream on Night, near-ink on Day. */
+.btn--style-primary {
+  --bg-color: var(--lumen-btn-bg);
+  --color: var(--lumen-btn-ink);
+  --hover-bg: var(--lumen-btn-hover-bg);
+  --hover-color: var(--lumen-btn-ink);
+  --box-shadow: none;
+}
+
+/* ---- Blueprint grid ------------------------------------------------------ */
+/* Lumen's "engineered, not vibed" signal: 48px ruled cells at ~4%, with the
+   canvas emitting through them. Login and dashboard only.
+   The grid hangs off the full-height wrapper rather than .dashboard itself —
+   .dashboard is only as tall as its cards, so painting it there cuts the grid
+   off mid-viewport. :has() scopes it to the dashboard route without markup. */
+.template-minimal,
+.template-default__wrap:has(.dashboard) {
+  background:
+    linear-gradient(var(--lumen-grid) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, var(--lumen-grid) 1px, transparent 1px) 0 0 / 48px 48px,
+    radial-gradient(60% 50% at 78% 30%, var(--lumen-emit) 0%, transparent 65%),
+    var(--theme-bg);
+}
+
+/* ---- Hairline cards with inner emission ---------------------------------- */
+/* Lit from within, not dropped. Emission capped at 4% rest / 10% hover so the
+   cards never read as accent-tinted. */
+.card {
+  background:
+    radial-gradient(120% 100% at 50% 0%, var(--lumen-card-emit) 0%, transparent 70%),
+    var(--theme-bg);
+  border-color: var(--lumen-rule);
+  box-shadow: none;
+  transition:
+    transform 220ms var(--lumen-ease-soft),
+    background 220ms var(--lumen-ease-soft),
+    border-color 220ms var(--lumen-ease-soft);
+}
+
+.card--has-onclick:hover {
+  background:
+    radial-gradient(120% 100% at 50% 0%, var(--lumen-card-emit-hover) 0%, transparent 70%),
+    var(--theme-bg);
+  border-color: var(--lumen-rule);
+  box-shadow: none;
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card--has-onclick:hover {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+}
+
+/* ---- Sidebar ------------------------------------------------------------- */
+/* Payload ships nav links as bare text that underlines on hover, with the group
+   headings at body size. Both are restyled here: links become real rows with a
+   fill, headings drop into the mono label register. No markup touched.
+   Note: px, not Payload's base() — that Sass function lives in vars.scss, which
+   this file deliberately does not @import (it would pull in the whole toolkit). */
+
+.nav {
+  border-right: 1px solid var(--lumen-rule);
+}
+
+[dir='rtl'] .nav {
+  border-right: none;
+  border-left: 1px solid var(--lumen-rule);
+}
+
+/* Group headings join the mono label register used by field labels and table
+   headers, so the whole admin reads as one instrument panel.
+   Payload paints these with --theme-elevation-400 and the chevron with
+   --theme-elevation-200 — measured, that is 3.36:1 and 1.63:1 on Day paper,
+   against floors of 4.5:1 (11px text) and 3:1 (UI icon). Hence explicit tokens.
+   NOTE: uppercase here deliberately overrides the Register 1 rule above. It is
+   the only place it does. Group headings are labels, not prose — the same
+   register as .field-label and .table thead th. Delete the line to revert. */
+.nav-group {
+  margin-bottom: 18px;
+}
+
+.nav-group__toggle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lumen-nav-heading);
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.nav-group__toggle:hover,
+.nav-group__toggle:focus-visible {
+  color: var(--theme-elevation-1000);
+}
+
+/* Label, then a hairline running out to the sidebar edge. The heading reads as
+   a section rule rather than a dim word floating above the links.
+   .nav-group__label is a real div in Payload's markup, so the ::after can be a
+   flex sibling of the text without touching any component. */
+.nav-group__label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nav-group__label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--lumen-rule);
+}
+
+/* Payload nudges the chevron up 4px to sit against align-items: flex-start;
+   the toggle is centre-aligned now, so that nudge has to go. */
+.nav-group__toggle svg {
+  margin-top: 0;
+}
+
+.nav-group__indicator .stroke {
+  stroke: var(--lumen-nav-chevron);
+}
+
+.nav-group__toggle:hover .stroke,
+.nav-group__toggle:focus-visible .stroke {
+  stroke: var(--theme-elevation-1000);
+}
+
+/* Rows, not bare text. The negative inline margin lets the fill bleed past the
+   text column to the sidebar's padding edge, so the row reads full-width. */
+.nav__link {
+  padding-block: 7px;
+  padding-inline: 10px;
+  margin-inline: -10px;
+  width: calc(100% + 20px);
+  border-radius: var(--style-radius-m);
+  transition:
+    background 160ms var(--lumen-ease-soft),
+    color 160ms var(--lumen-ease-soft);
+}
+
+a.nav__link:hover,
+a.nav__link:focus-visible {
+  text-decoration: none; /* Payload underlines here; the fill replaces it */
+  background: var(--lumen-nav-hover);
+  color: var(--theme-elevation-1000);
+}
+
+/* Payload marks the current route either with .active or by rendering the
+   indicator element — match both so the row never half-highlights. */
+.nav__link.active,
+.nav__link:has(.nav__link-indicator) {
+  background: var(--lumen-nav-active);
+  color: var(--theme-elevation-1000);
+}
+
+/* The indicator sits at base(-1) by default, i.e. outside the link box. With
+   the row fill it belongs on the row's own leading edge. */
+.nav__link-indicator {
+  inset-inline-start: 0;
+  top: 50%;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 0 2px 2px 0;
+  background: var(--lumen-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__link {
+    transition-duration: 0.01ms;
+  }
+}

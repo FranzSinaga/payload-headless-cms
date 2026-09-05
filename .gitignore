@@ -44,3 +44,5 @@ next-env.d.ts
 /media
 
 .claude*
+CLAUDE.md
+.hallmark/

@@ -1,67 +1,91 @@
-# Payload Blank Template
+# Payload Headless CMS
 
-This template comes configured with the bare minimum to get started on anything you need.
+Shared [Payload 3](https://payloadcms.com) backend for two portfolio sites (Franz and Margaretta). Next.js 15 + React 19, Postgres, self-hosted on a VPS behind Docker Compose, deployed by Drone CI on push to `master`.
 
-## Quick start
+## Stack
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+| | |
+|---|---|
+| CMS | Payload 3.42 (`@payloadcms/next`, `@payloadcms/ui`) |
+| Database | Postgres via `@payloadcms/db-postgres` — schema changes go through migrations only (`push: false`) |
+| Editor | Lexical rich text with a custom `CodeBlock` |
+| Runtime | Next.js 15.3 (App Router, standalone output), Node 20 |
+| Deploy | Dockerfile + docker-compose, Drone CI (`.drone.yml`) |
 
-## Quick Start - local setup
+## Local setup
 
-To spin up this template locally, follow these steps:
+```bash
+cp .env.example .env      # set DATABASE_URI + PAYLOAD_SECRET
+pnpm install
+pnpm dev                  # http://localhost:3000
+```
 
-### Clone
+Admin panel lives at `/admin`, REST at `/api`, GraphQL at `/api/graphql` (playground at `/api/graphql-playground`).
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+You need a reachable Postgres instance. `DATABASE_URI` looks like `postgres://user:pass@127.0.0.1:5432/dbname`.
 
-### Development
+### Migrations
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URI` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+`push` is disabled, so the schema never auto-syncs — every change is a migration file in `src/migrations`.
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+```bash
+pnpm payload migrate:create   # after changing a collection
+pnpm payload migrate          # apply
+```
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+### Codegen
 
-#### Docker (Optional)
+```bash
+pnpm generate:types       # regenerates src/payload-types.ts
+pnpm generate:importmap   # after adding an admin component
+```
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+Run `generate:types` whenever a collection changes — `src/payload-types.ts` is committed.
 
-To do so, follow these steps:
+## Collections
 
-- Modify the `MONGODB_URI` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URI` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+Global:
 
-## How it works
+- `users` — auth-enabled, gates the admin panel
+- `media` — uploads
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+Grouped in the admin sidebar as *Franz Collections*:
 
-### Collections
+- `franz-blogs`, `franz-media`, `franz-work-experience`
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+…and *Margaretta Collections*:
 
-- #### Users (Authentication)
+- `etta-projects`, `etta-course`, `etta-exploration`, `etta-media`, `etta-work-experience`
 
-  Users are auth-enabled collections that have access to the admin panel.
+Uploads are capped at 5MB and CORS is open (`cors: '*'`) so the portfolio frontends can read the API directly.
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+## Blocks
 
-- #### Media
+Reusable Lexical/field blocks in `src/blocks`: `CodeBlock` (syntax-highlighted, language list in `src/lib/const.ts`), `LinkBlock`, `TextFieldBlock`, `UploadBlock`.
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+## Deployment
 
-### Docker
+`docker-compose.yml` defines two services, both reading `.env.production`:
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+- **payload** — the app, bound to `127.0.0.1:5000` (loopback only; a reverse proxy fronts it), media persisted via `./media:/app/media`
+- **migrate** — one-shot `pnpm payload migrate`, under the `tools` profile so it never starts with `up`
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+Both join the external `pgsql` network, where Postgres already lives. Create it once on the host if it doesn't exist:
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+```bash
+docker network create pgsql
+```
 
-## Questions
+Drone runs on push to `master` with `clone: disable` — it SSHes into the VPS and the repo is pulled there:
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+```bash
+cd ~/app/payload
+git pull origin master
+docker compose down
+docker compose build --no-cache
+docker compose run --rm migrate
+docker compose up -d
+docker system prune -f
+```
+
+Migrations run before the app comes back up, so a deploy with a pending schema change is safe.

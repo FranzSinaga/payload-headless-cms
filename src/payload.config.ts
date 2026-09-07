@@ -75,6 +75,10 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
+    // Schema changes go through src/migrations only. Without this, dev runs a
+    // drizzle push on boot — and DATABASE_URI points at a remote database, so
+    // that push would alter it, bypassing the migration files entirely.
+    push: false,
     pool: {
       connectionString: process.env.DATABASE_URI || '',
     },

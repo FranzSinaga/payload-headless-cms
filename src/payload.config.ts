@@ -42,7 +42,6 @@ import { Projects as EthaProjects } from './collections/margaretta/projects'
 import { Exploration as EthaExploration } from './collections/margaretta/exploration'
 
 import { CodeBlock } from './blocks/CodeBlock'
-import { BeforeLogin } from './components/BeforeLogin'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,7 +54,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
-      beforeLogin: [BeforeLogin],
+      beforeLogin: [{ path: 'src/components/BeforeLogin/index.tsx#BeforeLogin' }],
     },
   },
   collections: [

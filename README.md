@@ -1,6 +1,6 @@
 # Payload Headless CMS
 
-Shared [Payload 3](https://payloadcms.com) backend for Franz and Margaretta's sites — general-purpose, not tied to any one site type. Next.js 15 + React 19, Postgres, self-hosted on a VPS behind Docker Compose, deployed by Drone CI on push to `master`.
+General-purpose [Payload 3](https://payloadcms.com) backend built to host multiple independent sites, not tied to any one site type or a fixed number of tenants — each site's collections live under their own folder, slug prefix, and admin sidebar group, so adding another is additive. Next.js 15 + React 19, Postgres, self-hosted on a VPS behind Docker Compose, deployed by Drone CI on push to `master`.
 
 ## Stack
 
@@ -49,13 +49,12 @@ Global:
 - `users` — auth-enabled, gates the admin panel
 - `media` — uploads
 
-Grouped in the admin sidebar as *Franz Collections*:
+Per-site collections are grouped in the admin sidebar by their own `admin.group`. Currently:
 
 - `franz-blogs`, `franz-media`, `franz-work-experience`
-
-…and *Margaretta Collections*:
-
 - `etta-projects`, `etta-course`, `etta-exploration`, `etta-media`, `etta-work-experience`
+
+Add another site by giving its collections a new shared slug prefix, folder under `src/collections/`, and `admin.group` — following the same pattern rather than growing the existing groups.
 
 Uploads are capped at 5MB and CORS is open (`cors: '*'`) so each owner's frontend can read the API directly.
 

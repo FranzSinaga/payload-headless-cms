@@ -40,6 +40,10 @@ Requires a reachable Postgres instance; `DATABASE_URI` in `.env` (copy from `.en
 
 **Path aliases:** `@/*` → `src/*`, `@payload-config` → `src/payload.config.ts` (see `tsconfig.json`).
 
+## Git commits
+
+Don't append a `Claude-Session:` link/footer to commit messages in this repo.
+
 ## Deployment
 
 `docker-compose.yml` defines `payload` (the app, `127.0.0.1:5000` loopback, reverse-proxied) and `migrate` (one-shot `pnpm payload migrate`, `tools` profile, never starts with `up`). Both join an external `pgsql` Docker network that must already exist on the host (`docker network create pgsql`) alongside a `net-payload-cms` network. Drone (`.drone.yml`) runs on push to `master` with `clone: disable` — it SSHes into the VPS, pulls, rebuilds, runs the `migrate` service, then brings the app back up, so migrations always apply before the new app code serves traffic.

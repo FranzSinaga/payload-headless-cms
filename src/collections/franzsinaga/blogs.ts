@@ -1,7 +1,7 @@
 import { CodeBlock } from '@/blocks/CodeBlock'
 import { createUploadBlock } from '@/blocks/UploadBlock'
 import { richTextDefaultProps } from '@/lib/richtext-default'
-import { BlocksFeature, lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
+import { BlocksFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import type { CollectionConfig } from 'payload'
 import slugify from 'slugify'
 

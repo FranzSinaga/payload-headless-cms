@@ -26,7 +26,6 @@ export const richTextDefaultProps = [
   OrderedListFeature(),
   LinkFeature(),
   BlockquoteFeature(),
-  // UploadFeature(),
   HorizontalRuleFeature(),
   InlineCodeFeature(),
 ]

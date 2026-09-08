@@ -1,24 +1,6 @@
 // storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import {
-  BlockquoteFeature,
-  BlocksFeature,
-  BoldFeature,
-  FixedToolbarFeature,
-  HeadingFeature,
-  HorizontalRuleFeature,
-  InlineCodeFeature,
-  ItalicFeature,
-  lexicalEditor,
-  LinkFeature,
-  OrderedListFeature,
-  ParagraphFeature,
-  StrikethroughFeature,
-  UnderlineFeature,
-  UnorderedListFeature,
-  UploadFeature,
-} from '@payloadcms/richtext-lexical'
+import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -40,8 +22,6 @@ import { WorkExperience as EthaWorkExperience } from './collections/margaretta/w
 import { Course as EthaCourse } from './collections/margaretta/course'
 import { Projects as EthaProjects } from './collections/margaretta/projects'
 import { Exploration as EthaExploration } from './collections/margaretta/exploration'
-
-import { CodeBlock } from './blocks/CodeBlock'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -87,10 +67,7 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [
-    payloadCloudPlugin(),
-    // storage-adapter-placeholder
-  ],
+  // storage-adapter-placeholder
   cors: '*',
   upload: {
     limits: {

@@ -40,7 +40,6 @@ export const WorkExperience: CollectionConfig = {
       label: 'Location',
       type: 'text',
       defaultValue: '',
-      // required: true,
     },
     {
       name: 'startDate',
@@ -74,7 +73,6 @@ export const WorkExperience: CollectionConfig = {
     },
     defaultColumns: [
       'position',
-      // 'image',
       'organization',
       'active',
       'startDate',

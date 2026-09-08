@@ -1,6 +1,6 @@
 # Payload Headless CMS
 
-Shared [Payload 3](https://payloadcms.com) backend for two portfolio sites (Franz and Margaretta). Next.js 15 + React 19, Postgres, self-hosted on a VPS behind Docker Compose, deployed by Drone CI on push to `master`.
+Shared [Payload 3](https://payloadcms.com) backend for Franz and Margaretta's sites — general-purpose, not tied to any one site type. Next.js 15 + React 19, Postgres, self-hosted on a VPS behind Docker Compose, deployed by Drone CI on push to `master`.
 
 ## Stack
 
@@ -57,7 +57,7 @@ Grouped in the admin sidebar as *Franz Collections*:
 
 - `etta-projects`, `etta-course`, `etta-exploration`, `etta-media`, `etta-work-experience`
 
-Uploads are capped at 5MB and CORS is open (`cors: '*'`) so the portfolio frontends can read the API directly.
+Uploads are capped at 5MB and CORS is open (`cors: '*'`) so each owner's frontend can read the API directly.
 
 ## Blocks
 

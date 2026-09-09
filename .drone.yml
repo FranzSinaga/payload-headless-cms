@@ -28,7 +28,7 @@ steps:
     commands:
       - echo "=== Typecheck and lint ==="
       - cd $PROJECT_PATH
-      - docker run --rm -v "$PWD":/app -w /app node:20-alpine sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm exec tsc --noEmit && pnpm run lint"
+      - docker run --rm -e CI=true -v "$PWD":/app -w /app node:20-alpine sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm exec tsc --noEmit && pnpm run lint"
   - name: Build
     environment: *project_env
     commands:

@@ -25,7 +25,6 @@
   --cms-muted: var(--theme-elevation-600);
   --cms-sidebar-bg: var(--theme-elevation-50);
   --cms-nav-hover: var(--theme-elevation-100);
-  --cms-nav-active: var(--cms-glass-active);
   --cms-row-divider: var(--theme-elevation-100);
   --cms-row-hover: var(--theme-elevation-50);
 
@@ -187,6 +186,11 @@
   --style-radius-m: 6px;
   --style-radius-l: 8px;
 
+  /* Line icons used as CSS masks (tinted by background-color): house for the
+     breadcrumb home and the sidebar Home link, person for Profile. */
+  --cms-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5'/%3E%3C/svg%3E");
+  --cms-icon-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+
   /* ---- Glass ----------------------------------------------------------------- */
   /* Frosted surfaces over a field of soft colour blobs (--cms-backdrop, pinned
      behind the admin shell and the login screen).
@@ -197,9 +201,9 @@
        glass; their edge is a dark hairline (line), since a white border
        vanishes on a near-white sheet.
      - tint: table header rows and hover wrappers — a faint wash toward text.
-     - active: the current sidebar link — a brighter pane on the glass rail. */
+     - nav-active: the current sidebar link — a brighter pane on the glass rail. */
   --cms-glass-chrome: oklch(99.5% 0.002 255 / 0.6);
-  --cms-glass-active: oklch(100% 0 0 / 0.72);
+  --cms-nav-active: oklch(100% 0 0 / 0.72);
   --cms-glass-sheet: oklch(99.5% 0.002 255 / 0.76);
   --cms-glass-card: oklch(100% 0 0 / 0.55);
   --cms-glass-tint: oklch(25% 0.02 255 / 0.04);
@@ -223,7 +227,7 @@
    light lines, and the blobs dim to a low glow. */
 html[data-theme='dark'] {
   --cms-glass-chrome: oklch(21% 0.012 255 / 0.62);
-  --cms-glass-active: oklch(100% 0 0 / 0.09);
+  --cms-nav-active: oklch(100% 0 0 / 0.09);
   --cms-glass-sheet: oklch(19% 0.012 255 / 0.8);
   --cms-glass-card: oklch(100% 0 0 / 0.04);
   --cms-glass-tint: oklch(100% 0 0 / 0.05);
@@ -243,7 +247,7 @@ html[data-theme='dark'] {
   :root,
   html[data-theme='dark'] {
     --cms-glass-chrome: var(--theme-elevation-0);
-    --cms-glass-active: var(--theme-elevation-150);
+    --cms-nav-active: var(--theme-elevation-150);
     --cms-glass-sheet: var(--theme-elevation-0);
     --cms-glass-card: var(--theme-elevation-0);
     --cms-glass-tint: var(--theme-elevation-50);
@@ -256,6 +260,24 @@ html[data-theme='dark'] {
 body {
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+}
+
+/* The colour field behind the glass (admin shell and login), pinned to the
+   viewport so it holds still while the page scrolls; isolation keeps it above
+   each template's own fill. Below 1025px the admin's opaque content wrap
+   covers it. */
+.template-default,
+.template-minimal {
+  isolation: isolate;
+}
+
+:is(.template-default, .template-minimal)::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--cms-backdrop);
+  pointer-events: none;
 }
 
 /* ---- Content paper ------------------------------------------------------------ */
@@ -280,19 +302,7 @@ body {
     --cms-canvas: var(--theme-elevation-50);
     --cms-panel-radius: 20px;
 
-    isolation: isolate;
     background-color: var(--cms-canvas);
-  }
-
-  /* The colour field behind the glass, pinned to the viewport so it holds
-     still while the page scrolls. isolation keeps it above the canvas fill. */
-  .template-default::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background: var(--cms-backdrop);
-    pointer-events: none;
   }
 
   /* Dark mode: the canvas sits below the panels, not above them. */
@@ -430,8 +440,6 @@ body {
    item becomes a house glyph, masked and tinted by currentColor. Links are soft
    pills; focus rings sit inside them because the header clips overflow. */
 .step-nav {
-  --cms-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5'/%3E%3C/svg%3E");
-
   gap: 2px;
   width: max-content;
   padding: 5px 8px;
@@ -788,19 +796,31 @@ body {
   border-bottom: 1px solid var(--theme-border-color);
 }
 
-/* Each link leads with a 16px line icon (house, person), muted until the row
-   is hovered, focused or current. */
-.nav-home__icon {
+/* Each link leads with a 16px line icon (house, person) drawn as a mask, like
+   the breadcrumb home glyph — muted until the row is hovered, focused or
+   current. */
+.nav-home .nav__link::before {
+  content: '';
   flex: none;
+  width: 16px;
+  height: 16px;
   margin-inline-end: 12px;
-  color: var(--cms-muted);
-  transition: color var(--cms-dur) var(--cms-ease);
+  background-color: var(--cms-muted);
+  -webkit-mask: var(--cms-nav-icon) center / contain no-repeat;
+  mask: var(--cms-nav-icon) center / contain no-repeat;
+  transition: background-color var(--cms-dur) var(--cms-ease);
 }
 
-.nav-home a.nav__link:hover .nav-home__icon,
-.nav-home a.nav__link:focus-visible .nav-home__icon,
-.nav-home .nav__link:has(.nav__link-indicator) .nav-home__icon {
-  color: var(--theme-text);
+#nav-home {
+  --cms-nav-icon: var(--cms-icon-home);
+}
+
+#nav-account {
+  --cms-nav-icon: var(--cms-icon-user);
+}
+
+.nav-home .nav__link:is(:hover, :focus-visible, :has(.nav__link-indicator))::before {
+  background-color: var(--theme-text);
 }
 
 .nav-group__toggle {
@@ -1018,17 +1038,7 @@ a.nav__link:focus-visible {
    tablet landscape up. :has() scopes the card rules to the login route;
    forgot/reset-password share the shell and colour field but not .login__brand. */
 .template-minimal {
-  isolation: isolate;
   background: var(--theme-elevation-50);
-}
-
-.template-minimal::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: var(--cms-backdrop);
-  pointer-events: none;
 }
 
 .template-minimal:has(.login__brand) {
@@ -1271,7 +1281,6 @@ a.nav__link:focus-visible {
 .payload-toast-container .payload-toast-item {
   --cms-toast-tone: var(--theme-elevation-600);
   --cms-toast-tint: color-mix(in oklch, var(--cms-toast-tone) 10%, transparent);
-  --cms-toast-edge: color-mix(in oklch, var(--cms-toast-tone) 30%, var(--cms-glass-border));
 
   gap: 12px;
   padding: 12px 16px;
@@ -1280,7 +1289,7 @@ a.nav__link:focus-visible {
   line-height: 20px;
   color: var(--theme-text);
   background: linear-gradient(var(--cms-toast-tint), var(--cms-toast-tint)), var(--cms-glass-sheet);
-  border: 1px solid var(--cms-toast-edge);
+  border: 1px solid color-mix(in oklch, var(--cms-toast-tone) 30%, var(--cms-glass-border));
   border-radius: 12px;
   box-shadow: var(--cms-glass-highlight), var(--cms-shadow-md), var(--cms-glass-shadow);
   -webkit-backdrop-filter: var(--cms-glass-blur);

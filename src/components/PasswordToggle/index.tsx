@@ -30,11 +30,6 @@ export const PasswordToggle: React.FC = () => {
       set: () => {},
     })
     setInput(el)
-
-    return () => {
-      delete (el as Partial<HTMLInputElement>).type
-      typeProp.set?.call(el, 'password')
-    }
   }, [])
 
   useEffect(() => {

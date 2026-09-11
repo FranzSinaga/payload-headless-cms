@@ -35,6 +35,7 @@ export default buildConfig({
     },
     components: {
       beforeLogin: [{ path: 'src/components/BeforeLogin/index.tsx#BeforeLogin' }],
+      afterLogin: [{ path: 'src/components/PasswordToggle/index.tsx#PasswordToggle' }],
       beforeNavLinks: [{ path: 'src/components/NavHome/index.tsx#NavHome' }],
       logout: {
         Button: { path: 'src/components/LogoutButton/index.tsx#LogoutButton' },

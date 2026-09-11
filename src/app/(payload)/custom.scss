@@ -296,6 +296,46 @@ body {
   }
 }
 
+/* ---- Sticky app header --------------------------------------------------------- */
+/* The app header (breadcrumb pill + account avatar) stays pinned while the page
+   scrolls. Its background layer — transparent by default — is made opaque in
+   the canvas colour, so content scrolling underneath doesn't show through.
+   Payload's other in-page sticky elements assume they stick to the very top, so
+   each is pushed down by the header's height: the document Save bar, the API
+   view's toolbar, and (on desktop, when the sidebar isn't stacked) the document
+   sidebar and live preview, whose viewport-height calc shrinks to match.
+   Scoped to the content wrap: drawers scroll in their own container and keep
+   Payload's offsets. */
+.template-default__wrap > .app-header {
+  position: sticky;
+  top: 0;
+}
+
+.template-default__wrap > .app-header .app-header__bg {
+  opacity: 1;
+  background: var(--cms-canvas, var(--theme-bg));
+}
+
+.template-default__wrap .doc-controls,
+.template-default__wrap .query-inspector__toggle-fullscreen-button-container {
+  top: var(--app-header-height);
+}
+
+.template-default__wrap .query-inspector__configuration {
+  top: calc(var(--app-header-height) + var(--base));
+}
+
+@media (min-width: 1025px) {
+  .template-default__wrap .document-fields:not(.document-fields--force-sidebar-wrap) .document-fields__sidebar-wrap,
+  .template-default__wrap .live-preview-window {
+    top: calc(var(--app-header-height) + var(--doc-controls-height));
+  }
+
+  .template-default__wrap .document-fields:not(.document-fields--force-sidebar-wrap) .document-fields__sidebar-wrap {
+    height: calc(100vh - var(--app-header-height) - var(--doc-controls-height));
+  }
+}
+
 /* ---- Breadcrumbs ------------------------------------------------------------ */
 /* Payload's StepNav is a flat row: home link, then a bare "/" span after home
    and after every step (each step is a Fragment, so no wrapper), ending in
@@ -886,6 +926,49 @@ a.nav__link:focus-visible {
   .login__brand {
     margin-bottom: var(--base);
   }
+}
+
+/* Show/hide password — src/components/PasswordToggle, portalled beside the input. */
+.field-type.password div:has(> .password-toggle) {
+  position: relative;
+
+  > input {
+    padding-inline-end: 44px;
+  }
+}
+
+.password-toggle {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 6px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-block: auto;
+  padding: 0;
+  color: var(--cms-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--style-radius-m);
+  cursor: pointer;
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.password-toggle:hover {
+  color: var(--theme-text);
+  background: var(--theme-elevation-100);
+}
+
+.password-toggle:active {
+  background: var(--theme-elevation-150);
+}
+
+.password-toggle:focus-visible {
+  outline: var(--accessibility-outline);
+  outline-offset: var(--accessibility-outline-offset);
 }
 
 /* Photo panel — hidden below 861px, where login stays a single-column card. */

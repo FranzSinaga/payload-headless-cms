@@ -363,6 +363,7 @@ body {
   align-items: center;
   gap: 10px;
   margin-bottom: 4px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--theme-text);
 }
@@ -375,19 +376,9 @@ body {
 /* Active group — the collection you're on lives inside it. Payload only
    renders .nav__link-indicator in the selected link, and AnimateHeight keeps
    collapsed children in the DOM (display: none), so a closed group is marked
-   too. The dot makes it read differently from a plain hover. */
+   too. */
 .nav-group:has(.nav__link-indicator) .nav-group__toggle {
   color: var(--cms-card-hover-title);
-}
-
-.nav-group:has(.nav__link-indicator) .nav-group__label::before {
-  content: '';
-  flex: none;
-  width: 6px;
-  height: 6px;
-  margin-inline-end: -4px;
-  border-radius: 50%;
-  background: var(--cms-accent);
 }
 
 .nav-group:has(.nav__link-indicator) .nav-group__label::after {
@@ -469,7 +460,10 @@ a.nav__link:focus-visible {
   position: relative;
   margin-inline: 0;
   width: 100%;
+  padding-block: 5px;
   padding-inline: 8px;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .nav-group__content > .nav__link::before,
@@ -515,6 +509,15 @@ a.nav__link:focus-visible {
   width: 100%;
 }
 
+/* Payload pads the sidebar scroll area 40px at the bottom, which floats the
+   logout button well above the screen edge. 16px matches the group spacing. */
+.nav__scroll {
+  padding-bottom: 16px;
+}
+
+/* Outline button: transparent fill, a clear 1px border, no shadow. Hover is
+   neutral — a grey fill, a slightly darker border and a soft shadow; press
+   drops the shadow and deepens the grey. */
 .logout-button {
   display: flex;
   align-items: center;
@@ -529,24 +532,25 @@ a.nav__link:focus-visible {
   white-space: nowrap;
   text-decoration: none;
   color: var(--theme-text);
-  background: var(--theme-elevation-0);
-  border: 1px solid var(--theme-border-color);
+  background: transparent;
+  border: 1px solid var(--theme-elevation-300);
   border-radius: var(--style-radius-m);
-  box-shadow: var(--cms-shadow-sm);
   transition:
     background-color var(--cms-dur) var(--cms-ease),
     border-color var(--cms-dur) var(--cms-ease),
-    color var(--cms-dur) var(--cms-ease);
+    box-shadow var(--cms-dur) var(--cms-ease);
 }
 
 .logout-button:hover {
   text-decoration: none;
-  color: var(--cms-card-hover-title);
-  background: var(--cms-card-hover-bg);
-  border-color: var(--cms-card-hover-border);
+  color: var(--theme-text);
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-400);
+  box-shadow: var(--cms-shadow-sm);
 }
 
 .logout-button:active {
+  background: var(--theme-elevation-150);
   box-shadow: none;
 }
 

@@ -1,6 +1,7 @@
 /* Hallmark · scope: payload-admin-theme · genre: modern-minimal · theme: custom (utilitarian CMS, playful type)
  * audience: editors of the franz-* and etta-* sites · use: find and edit content fast · tone: utilitarian with character
  * paper oklch(99.2% 0.002 255) · accent oklch(53% 0.14 255) slate-blue
+ * glass: frosted chrome, sheets and cards over fixed soft blobs (hues 255 · 300 · 195)
  * type: Bricolage Grotesque (display) + Satoshi (body) + Space Mono (labels, code)
  * axes: light+dark / expressive-grotesk-sans / cool
  * One definition per ramp: Payload re-indexes base, success, error and warning for dark mode itself.
@@ -24,7 +25,7 @@
   --cms-muted: var(--theme-elevation-600);
   --cms-sidebar-bg: var(--theme-elevation-50);
   --cms-nav-hover: var(--theme-elevation-100);
-  --cms-nav-active: var(--theme-elevation-150);
+  --cms-nav-active: var(--cms-glass-active);
   --cms-row-divider: var(--theme-elevation-100);
   --cms-row-hover: var(--theme-elevation-50);
 
@@ -35,7 +36,7 @@
   /* Dashboard card hover colour. Payload's success ramp is the accent and it
      re-indexes for dark mode, so these stay legible in both: the tint stays a
      step off the canvas, the title stays >= 4.3:1 against it. */
-  --cms-card-hover-bg: var(--theme-success-100);
+  --cms-card-hover-bg: color-mix(in oklch, var(--theme-success-100) 65%, transparent);
   --cms-card-hover-border: var(--theme-success-400);
   --cms-card-hover-title: var(--theme-success-600);
   --cms-ease: cubic-bezier(0.2, 0, 0, 1);
@@ -185,6 +186,71 @@
   --style-radius-s: 4px;
   --style-radius-m: 6px;
   --style-radius-l: 8px;
+
+  /* ---- Glass ----------------------------------------------------------------- */
+  /* Frosted surfaces over a field of soft colour blobs (--cms-backdrop, pinned
+     behind the admin shell and the login screen).
+     - chrome: header bar and sidebar — the thinnest fill, blurred.
+     - sheet: content page, login card, dialogs — the most opaque fill, so long
+       forms stay easy to read.
+     - card: tables, dashboard items and the breadcrumb pill, which sit on other
+       glass; their edge is a dark hairline (line), since a white border
+       vanishes on a near-white sheet.
+     - tint: table header rows and hover wrappers — a faint wash toward text.
+     - active: the current sidebar link — a brighter pane on the glass rail. */
+  --cms-glass-chrome: oklch(99.5% 0.002 255 / 0.6);
+  --cms-glass-active: oklch(100% 0 0 / 0.72);
+  --cms-glass-sheet: oklch(99.5% 0.002 255 / 0.76);
+  --cms-glass-card: oklch(100% 0 0 / 0.55);
+  --cms-glass-tint: oklch(25% 0.02 255 / 0.04);
+  --cms-glass-border: oklch(100% 0 0 / 0.75);
+  --cms-glass-line: oklch(25% 0.02 255 / 0.1);
+  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.6);
+  --cms-glass-shadow: 0 10px 24px -14px oklch(30% 0.05 255 / 0.28);
+  --cms-glass-blur: blur(20px) saturate(160%);
+  --cms-glass-row-hover: color-mix(in oklch, var(--theme-success-100) 45%, transparent);
+
+  --cms-blob-a: oklch(74% 0.13 255 / 0.55);
+  --cms-blob-b: oklch(76% 0.11 300 / 0.45);
+  --cms-blob-c: oklch(82% 0.09 195 / 0.45);
+  --cms-backdrop:
+    radial-gradient(42vmax 42vmax at 6% 0%, var(--cms-blob-a), transparent 70%),
+    radial-gradient(38vmax 38vmax at 100% 10%, var(--cms-blob-b), transparent 70%),
+    radial-gradient(46vmax 46vmax at 55% 105%, var(--cms-blob-c), transparent 70%);
+}
+
+/* Dark mode: smoky glass — fills turn translucent slate, edges become faint
+   light lines, and the blobs dim to a low glow. */
+html[data-theme='dark'] {
+  --cms-glass-chrome: oklch(21% 0.012 255 / 0.62);
+  --cms-glass-active: oklch(100% 0 0 / 0.09);
+  --cms-glass-sheet: oklch(19% 0.012 255 / 0.8);
+  --cms-glass-card: oklch(100% 0 0 / 0.04);
+  --cms-glass-tint: oklch(100% 0 0 / 0.05);
+  --cms-glass-border: oklch(100% 0 0 / 0.1);
+  --cms-glass-line: oklch(100% 0 0 / 0.08);
+  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.06);
+  --cms-glass-shadow: 0 10px 24px -14px oklch(0% 0 0 / 0.55);
+
+  --cms-blob-a: oklch(46% 0.13 255 / 0.5);
+  --cms-blob-b: oklch(42% 0.12 300 / 0.4);
+  --cms-blob-c: oklch(48% 0.08 195 / 0.3);
+}
+
+/* Reduced transparency: every glass surface goes solid and the blur is
+   dropped; the colour field stays as a quiet backdrop. */
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  html[data-theme='dark'] {
+    --cms-glass-chrome: var(--theme-elevation-0);
+    --cms-glass-active: var(--theme-elevation-150);
+    --cms-glass-sheet: var(--theme-elevation-0);
+    --cms-glass-card: var(--theme-elevation-0);
+    --cms-glass-tint: var(--theme-elevation-50);
+    --cms-glass-border: var(--theme-border-color);
+    --cms-glass-line: var(--theme-border-color);
+    --cms-glass-blur: none;
+  }
 }
 
 body {
@@ -193,9 +259,9 @@ body {
 }
 
 /* ---- Content paper ------------------------------------------------------------ */
-/* On desktop the content area is a grey canvas and each view sits on a white
-   sheet, like a page in a word processor; the app header (breadcrumb, account)
-   stays on the canvas above it.
+/* On desktop the content area is a colour field and each view sits on a frosted
+   glass sheet, like a page in a word processor; the app header (breadcrumb,
+   account) is a glass bar above it.
    - Views pad their content with --gutter-h. Inside the sheet that gutter is
      reset to the sheet's own padding. The app header gets the sheet's outer
      edge instead, so the breadcrumb pill and the account avatar line up with
@@ -213,9 +279,20 @@ body {
   .template-default {
     --cms-canvas: var(--theme-elevation-50);
     --cms-panel-radius: 20px;
-    --cms-paper-shadow: 0 10px 24px -14px oklch(20% 0.01 255 / 0.2);
 
+    isolation: isolate;
     background-color: var(--cms-canvas);
+  }
+
+  /* The colour field behind the glass, pinned to the viewport so it holds
+     still while the page scrolls. isolation keeps it above the canvas fill. */
+  .template-default::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--cms-backdrop);
+    pointer-events: none;
   }
 
   /* Dark mode: the canvas sits below the panels, not above them. */
@@ -223,16 +300,19 @@ body {
     --cms-canvas: var(--color-base-950);
   }
 
-  /* Sidebar: full height and flush left, as Payload lays it out, but a white
-     panel whose right-hand corners are rounded — the canvas shows in the
-     curve. Payload's own overflow: hidden clips the scroll area to the radius. */
+  /* Sidebar: full height and flush left, as Payload lays it out, but a frosted
+     panel whose bottom-right corner is rounded — the colour field shows in the
+     curve. The top-right corner stays square so it meets the glass header bar
+     without a gap. Payload's own overflow: hidden clips the scroll area to the
+     radius. */
   .template-default .nav {
-    background: var(--theme-elevation-0);
+    background: var(--cms-glass-chrome);
     border: 0;
-    border-inline-end: 1px solid var(--theme-border-color);
-    border-start-end-radius: var(--cms-panel-radius);
+    border-inline-end: 1px solid var(--cms-glass-border);
     border-end-end-radius: var(--cms-panel-radius);
-    box-shadow: var(--cms-paper-shadow);
+    box-shadow: var(--cms-glass-shadow);
+    -webkit-backdrop-filter: var(--cms-glass-blur);
+    backdrop-filter: var(--cms-glass-blur);
   }
 
   .template-default__wrap {
@@ -248,7 +328,7 @@ body {
     --gutter-h: var(--cms-gutter-content);
 
     padding-bottom: 32px;
-    background-color: var(--cms-canvas);
+    background-color: transparent;
   }
 
   /* Sheet's outer edge = inner content edge minus the sheet's padding. */
@@ -268,10 +348,13 @@ body {
     max-width: calc(var(--cms-content-max) + 2 * var(--cms-paper-pad));
     margin: 8px auto 0;
     padding-top: 24px;
-    background-color: var(--theme-elevation-0);
-    border: 1px solid var(--theme-border-color);
+    /* No backdrop-filter on the sheet: the blobs behind it are already soft,
+       and a filter would turn the sheet into the containing block for
+       Payload's fixed-position popups inside forms. */
+    background-color: var(--cms-glass-sheet);
+    border: 1px solid var(--cms-glass-border);
     border-radius: var(--cms-panel-radius);
-    box-shadow: var(--cms-paper-shadow);
+    box-shadow: var(--cms-glass-shadow);
   }
 
   .template-default__wrap > .collection-list {
@@ -298,8 +381,8 @@ body {
 
 /* ---- Sticky app header --------------------------------------------------------- */
 /* The app header (breadcrumb pill + account avatar) stays pinned while the page
-   scrolls. Its background layer — transparent by default — is made opaque in
-   the canvas colour, so content scrolling underneath doesn't show through.
+   scrolls. Its background layer — transparent by default — becomes a frosted
+   glass bar, so content scrolling underneath blurs out behind the breadcrumb.
    Payload's other in-page sticky elements assume they stick to the very top, so
    each is pushed down by the header's height: the document Save bar, the API
    view's toolbar, and (on desktop, when the sidebar isn't stacked) the document
@@ -313,7 +396,10 @@ body {
 
 .template-default__wrap > .app-header .app-header__bg {
   opacity: 1;
-  background: var(--cms-canvas, var(--theme-bg));
+  background: var(--cms-glass-chrome);
+  border-bottom: 1px solid var(--cms-glass-border);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
 }
 
 .template-default__wrap .doc-controls,
@@ -350,10 +436,10 @@ body {
   width: max-content;
   padding: 5px 8px;
   font-size: 14px;
-  background: var(--theme-elevation-0);
-  border: 1px solid var(--theme-border-color);
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
 }
 
 /* The whole trail sits in one pill, so Payload's right-edge fade would cut
@@ -561,8 +647,8 @@ body {
   left: 0;
   width: 100%;
   padding-left: 0;
-  background: var(--theme-elevation-0);
-  border: 1px solid var(--theme-border-color);
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
   border-radius: 12px;
 }
 
@@ -572,7 +658,7 @@ body {
 
 :is(.collection-list, .collection-folder-list, .folder-list, .versions) .table thead th {
   padding-block: 10px;
-  background: var(--theme-elevation-50);
+  background: var(--cms-glass-tint);
 }
 
 :is(.collection-list, .collection-folder-list, .folder-list, .versions) .table tbody td {
@@ -580,7 +666,7 @@ body {
 }
 
 :is(.collection-list, .collection-folder-list, .folder-list, .versions) .table tbody tr:hover {
-  background: var(--theme-success-50);
+  background: var(--cms-glass-row-hover);
 }
 
 /* The first column opens the document: a bold title rather than an underlined
@@ -604,18 +690,18 @@ body {
 }
 
 .card {
-  background: var(--theme-elevation-0);
-  border-color: var(--theme-border-color);
-  box-shadow: var(--cms-shadow-sm);
+  background: var(--cms-glass-card);
+  border-color: var(--cms-glass-line);
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
   transition:
     border-color var(--cms-dur) var(--cms-ease),
     box-shadow var(--cms-dur) var(--cms-ease);
 }
 
 .card--has-onclick:hover {
-  background: var(--theme-elevation-0);
+  background: var(--cms-glass-card);
   border-color: var(--theme-elevation-250);
-  box-shadow: var(--cms-shadow-md);
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-md);
 }
 
 /* Dashboard items lift 2px on hover (and on keyboard focus), then settle back
@@ -687,8 +773,8 @@ body {
 
 .nav-group:hover,
 .nav-group:focus-within {
-  background: var(--theme-elevation-50);
-  border-color: var(--theme-border-color);
+  background: var(--cms-glass-tint);
+  border-color: var(--cms-glass-line);
 }
 
 /* Home (dashboard) and Profile (account) links above the collection groups
@@ -696,7 +782,25 @@ body {
    Payload's nav__link markup, so row, hover and active styles below apply. */
 .nav-home {
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  /* Hairline that separates the general links from the collection groups. */
+  border-bottom: 1px solid var(--theme-border-color);
+}
+
+/* Each link leads with a 16px line icon (house, person), muted until the row
+   is hovered, focused or current. */
+.nav-home__icon {
+  flex: none;
+  margin-inline-end: 12px;
+  color: var(--cms-muted);
+  transition: color var(--cms-dur) var(--cms-ease);
+}
+
+.nav-home a.nav__link:hover .nav-home__icon,
+.nav-home a.nav__link:focus-visible .nav-home__icon,
+.nav-home .nav__link:has(.nav__link-indicator) .nav-home__icon {
+  color: var(--theme-text);
 }
 
 .nav-group__toggle {
@@ -770,9 +874,13 @@ a.nav__link:focus-visible {
   background: var(--cms-nav-hover);
 }
 
+/* Current link: a frosted pane — brighter fill, a hairline edge drawn inset
+   (the group's AnimateHeight wrapper clips anything outside) and the glass
+   top highlight. */
 .nav__link.active,
 .nav__link:has(.nav__link-indicator) {
   background: var(--cms-nav-active);
+  box-shadow: var(--cms-glass-highlight), inset 0 0 0 1px var(--cms-glass-line);
   font-weight: 500;
 }
 
@@ -906,21 +1014,33 @@ a.nav__link:focus-visible {
 }
 
 /* ---- Login -------------------------------------------------------------------- */
-/* A plain card on a tinted canvas, with the photo panel beside it from tablet
-   landscape up. :has() scopes the card rules to the login route;
-   forgot/reset-password share the shell but not .login__brand. */
+/* A frosted card over the colour field, with the photo panel beside it from
+   tablet landscape up. :has() scopes the card rules to the login route;
+   forgot/reset-password share the shell and colour field but not .login__brand. */
 .template-minimal {
+  isolation: isolate;
   background: var(--theme-elevation-50);
+}
+
+.template-minimal::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--cms-backdrop);
+  pointer-events: none;
 }
 
 .template-minimal:has(.login__brand) {
   .template-minimal__wrap {
     overflow: hidden;
     padding: calc(var(--base) * 2.5) calc(var(--base) * 2);
-    background: var(--theme-elevation-0);
-    border: 1px solid var(--theme-border-color);
+    background: var(--cms-glass-sheet);
+    border: 1px solid var(--cms-glass-border);
     border-radius: var(--style-radius-l);
-    box-shadow: var(--cms-shadow-sm);
+    box-shadow: var(--cms-glass-highlight), var(--cms-glass-shadow);
+    -webkit-backdrop-filter: var(--cms-glass-blur);
+    backdrop-filter: var(--cms-glass-blur);
   }
 
   .login__brand {
@@ -1090,10 +1210,12 @@ a.nav__link:focus-visible {
   width: min(440px, 100%);
   gap: 20px;
   padding: 28px;
-  background: var(--theme-elevation-0);
-  border: 1px solid var(--theme-border-color);
+  background: var(--cms-glass-sheet);
+  border: 1px solid var(--cms-glass-border);
   border-radius: 20px;
-  box-shadow: var(--cms-dialog-shadow);
+  box-shadow: var(--cms-glass-highlight), var(--cms-dialog-shadow);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
   animation: cms-dialog-in 180ms var(--cms-ease) both;
 }
 
@@ -1138,4 +1260,68 @@ a.nav__link:focus-visible {
   .confirmation-modal__wrapper {
     animation: none;
   }
+}
+
+/* ---- Toasts -------------------------------------------------------------------- */
+/* Payload's Sonner toasts as frosted glass cards, like the dialogs: sheet-weight
+   glass with blur, rounder corners and the glass top highlight. Instead of
+   Payload's solid pastel fill, each type is a faint wash of its colour over the
+   glass plus a tinted edge; text stays in the theme text colour. Payload's icons
+   already paint from the success/error/warning ramps, so they are left alone. */
+.payload-toast-container .payload-toast-item {
+  --cms-toast-tone: var(--theme-elevation-600);
+  --cms-toast-tint: color-mix(in oklch, var(--cms-toast-tone) 10%, transparent);
+  --cms-toast-edge: color-mix(in oklch, var(--cms-toast-tone) 30%, var(--cms-glass-border));
+
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--theme-text);
+  background: linear-gradient(var(--cms-toast-tint), var(--cms-toast-tint)), var(--cms-glass-sheet);
+  border: 1px solid var(--cms-toast-edge);
+  border-radius: 12px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-md), var(--cms-glass-shadow);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
+}
+
+.payload-toast-container .payload-toast-item.toast-success {
+  --cms-toast-tone: var(--theme-success-500);
+}
+
+.payload-toast-container .payload-toast-item.toast-error {
+  --cms-toast-tone: var(--theme-error-500);
+}
+
+.payload-toast-container .payload-toast-item.toast-warning {
+  --cms-toast-tone: var(--theme-warning-500);
+}
+
+/* Close: a muted glyph that picks up a soft glass chip on hover, the same for
+   every type (Payload recolours it per type). */
+.payload-toast-container .payload-toast-item .payload-toast-close-button {
+  display: grid;
+  place-items: center;
+  inset-inline-end: 10px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--cms-muted);
+  border-radius: var(--style-radius-m);
+  cursor: pointer;
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.payload-toast-container .payload-toast-item .payload-toast-close-button:hover {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+}
+
+.payload-toast-container .payload-toast-item .payload-toast-close-button:focus-visible {
+  outline: var(--accessibility-outline);
+  outline-offset: var(--accessibility-outline-offset);
 }

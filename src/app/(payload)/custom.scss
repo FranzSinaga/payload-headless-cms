@@ -1,95 +1,110 @@
-/* Hallmark · scope: payload-admin-theme · genre: atmospheric · theme: Lumen
- * Drop 01 Night Foundry -> html[data-theme='dark']  (cool-violet canvas, molten-brass accent)
- * Drop 02 Day Foundry   -> :root / light            (cool bone canvas, deep-indigo accent)
- * axes: dark+light paper / classical-serif (Instrument Serif) / warm-brass + cool-indigo
- * Retheme only — no component markup touched. Payload puts every one of its own
- * rules inside @layer payload-default, so the unlayered rules below win outright.
- * pre-emit critique: P5 H4 E4 S5 R4 V5
+/* Hallmark · scope: payload-admin-theme · genre: modern-minimal · theme: custom (utilitarian CMS, playful type)
+ * audience: editors of the franz-* and etta-* sites · use: find and edit content fast · tone: utilitarian with character
+ * paper oklch(99.2% 0.002 255) · accent oklch(53% 0.14 255) slate-blue
+ * type: Bricolage Grotesque (display) + Satoshi (body) + Space Mono (labels, code)
+ * axes: light+dark / expressive-grotesk-sans / cool
+ * One definition per ramp: Payload re-indexes base, success, error and warning for dark mode itself.
+ * Retheme only — no component markup touched. Payload's rules live in @layer payload-default,
+ * so the unlayered rules below win outright.
+ * pre-emit critique: P4 H5 E5 S5 R4 V4
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
 
 :root {
-  /* ---- Lumen semantic tokens (Day Foundry) ------------------------------ */
-  --lumen-accent: oklch(50% 0.17 272); /* violet-indigo — refracts */
-  --lumen-accent-ink: oklch(97% 0.012 272); /* text riding on the accent */
-  --lumen-rule: oklch(30% 0.022 265 / 0.16); /* hairline */
-  --lumen-grid: oklch(30% 0.022 265 / 0.07); /* blueprint grid line */
-  --lumen-emit: oklch(50% 0.17 272 / 0.04); /* canvas wash under the grid */
-  --lumen-card-emit: oklch(50% 0.17 272 / 0.045);
-  --lumen-card-emit-hover: oklch(50% 0.17 272 / 0.1);
-  --lumen-ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  /* ---- Semantic tokens ------------------------------------------------------ */
+  /* The accent fill is held constant across modes: 53% lightness carries white
+     text at ~4.6:1 on either canvas. Everything else points at Payload's
+     elevation tokens so it follows the light/dark toggle for free. */
+  --cms-accent: oklch(53% 0.14 255);
+  --cms-accent-hover: oklch(47% 0.135 255);
+  --cms-on-accent: oklch(99.2% 0.002 255);
 
-  /* Sidebar row states — fills, not underlines. */
-  --lumen-nav-hover: oklch(30% 0.022 265 / 0.06);
-  --lumen-nav-active: oklch(50% 0.17 272 / 0.1);
-  --lumen-nav-heading: oklch(44% 0.03 265); /* 7.03:1 on Day paper */
-  --lumen-nav-chevron: oklch(55% 0.03 265); /* 4.39:1 — a UI icon needs 3:1 */
+  --cms-muted: var(--theme-elevation-600);
+  --cms-sidebar-bg: var(--theme-elevation-50);
+  --cms-nav-hover: var(--theme-elevation-100);
+  --cms-nav-active: var(--theme-elevation-150);
+  --cms-row-divider: var(--theme-elevation-100);
+  --cms-row-hover: var(--theme-elevation-50);
 
-  /* Primary button — a neutral inversion, not a chromatic surface. On Day paper
-     the neutral that reads is the dark end of the ramp; cream would vanish. */
-  --lumen-btn-bg: oklch(30% 0.022 265);
-  --lumen-btn-ink: oklch(96.5% 0.014 265);
-  --lumen-btn-hover-bg: oklch(38% 0.024 265);
+  --cms-shadow-sm: 0 1px 2px oklch(20% 0.01 255 / 0.06);
+  --cms-shadow-md: 0 2px 6px oklch(20% 0.01 255 / 0.08);
+  --cms-shadow-lift: 0 6px 16px -4px oklch(53% 0.14 255 / 0.22);
 
-  /* ---- Base ramp — cool-violet, hue 265 --------------------------------- */
-  /* Payload's dark mode re-indexes this same ramp from the opposite end, so one
-     ramp carries both drops: base-0 is Day paper AND Night ink; base-900 is
-     Night paper AND Day near-ink. See @payloadcms/ui/dist/scss/colors.scss.
-     Tuned for long sessions: the ends are pulled off pure white / pure black so
-     body text lands near 10:1 rather than the ~17:1 of paper-white on ink, and
-     chroma is carried at 0.014–0.028 so the neutrals read violet, not grey. */
-  --color-base-0: oklch(96.5% 0.014 265);
-  --color-base-50: oklch(93.5% 0.016 265);
-  --color-base-100: oklch(88% 0.016 265); /* Night body text */
-  --color-base-150: oklch(84.5% 0.018 265);
-  --color-base-200: oklch(81% 0.02 265);
-  --color-base-250: oklch(77.5% 0.022 265);
-  --color-base-300: oklch(72% 0.024 265);
-  --color-base-350: oklch(67% 0.026 265);
-  /* 400 is --theme-elevation-400 in light mode = table column headers. Held at
-     61.5% so that muted text clears 3:1 on Day paper; Payload's stock value
-     (~67%) sits at 2.8:1 and is the one legibility bug inherited from default. */
-  --color-base-400: oklch(61.5% 0.028 265);
-  --color-base-450: oklch(58% 0.028 265);
-  --color-base-500: oklch(54.5% 0.028 265);
-  --color-base-550: oklch(51% 0.028 265);
-  --color-base-600: oklch(47.5% 0.028 265);
-  --color-base-650: oklch(44% 0.026 265);
-  --color-base-700: oklch(40% 0.024 265);
-  --color-base-750: oklch(35% 0.022 265);
-  --color-base-800: oklch(30% 0.022 265); /* Day body text */
-  --color-base-850: oklch(23% 0.02 265);
-  --color-base-900: oklch(17.5% 0.018 265); /* Night paper */
-  --color-base-950: oklch(14% 0.016 265);
-  --color-base-1000: oklch(11% 0.016 265);
+  /* Dashboard card hover colour. Payload's success ramp is the accent and it
+     re-indexes for dark mode, so these stay legible in both: the tint stays a
+     step off the canvas, the title stays >= 4.3:1 against it. */
+  --cms-card-hover-bg: var(--theme-success-100);
+  --cms-card-hover-border: var(--theme-success-400);
+  --cms-card-hover-title: var(--theme-success-600);
+  --cms-ease: cubic-bezier(0.2, 0, 0, 1);
+  --cms-dur: 120ms;
+  --cms-dur-lift: 180ms;
 
-  /* ---- Accent ramp (Day) — indigo, hue 272 ------------------------------ */
-  /* Payload's accent surfaces: focus ring, row selection, drag state, links.
-     Chroma pulled back from 0.24 to 0.17 — the old value glared on a full-width
-     button without buying any legibility. */
-  --color-success-50: oklch(96.5% 0.018 272);
-  --color-success-100: oklch(94% 0.032 272);
-  --color-success-150: oklch(90.5% 0.05 272);
-  --color-success-200: oklch(87% 0.065 272);
-  --color-success-250: oklch(82.5% 0.085 272);
-  --color-success-300: oklch(78% 0.105 272);
-  --color-success-350: oklch(73% 0.125 272);
-  --color-success-400: oklch(66% 0.145 272);
-  --color-success-450: oklch(58% 0.16 272);
-  --color-success-500: oklch(50% 0.17 272);
-  --color-success-550: oklch(46% 0.165 272);
-  --color-success-600: oklch(42% 0.155 272);
-  --color-success-650: oklch(38% 0.14 272);
-  --color-success-700: oklch(34% 0.125 272);
-  --color-success-750: oklch(30% 0.108 272);
-  --color-success-800: oklch(26% 0.09 272);
-  --color-success-850: oklch(22% 0.072 272);
-  --color-success-900: oklch(18% 0.055 272);
-  --color-success-950: oklch(14% 0.038 272);
+  /* Login photo panel — held constant across light/dark: the text sits on a
+     dark scrim over the photo, not on a theme surface. The base colour shows
+     while the image loads so the tagline is never white-on-white. */
+  --cms-login-photo: url('https://plus.unsplash.com/premium_photo-1682125139523-92d7def89cd1?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  --cms-photo-fallback: oklch(25% 0.012 255);
+  --cms-scrim-strong: oklch(12% 0.01 255 / 0.75);
+  --cms-scrim-soft: oklch(12% 0.01 255 / 0.4);
+  --cms-on-photo: oklch(97% 0.004 255);
+  --cms-on-photo-muted: oklch(92% 0.006 255 / 0.82);
+  --cms-photo-text-shadow: 0 1px 12px oklch(12% 0.01 255 / 0.5);
 
-  /* Payload mirrors --color-blue-* onto the same values; keep them aliased in
-     case a component reads the blue scale directly. */
+  /* ---- Base ramp — cool neutral, hue 255 ----------------------------------- */
+  /* Light mode reads 0 as canvas and 800 as body text (~13:1); dark mode reads
+     900 as canvas and 100 as body text. 150 is Payload's border colour for
+     cards, inputs and dividers — held at 90.5% so field boundaries are
+     visible without going heavy. 400 is placeholder/table-header grey, held at
+     55% to clear 4.5:1 on the canvas (Payload's stock grey does not). */
+  --color-base-0: oklch(99.2% 0.002 255);
+  --color-base-50: oklch(97.4% 0.003 255);
+  --color-base-100: oklch(95% 0.004 255);
+  --color-base-150: oklch(90.5% 0.006 255);
+  --color-base-200: oklch(86% 0.007 255);
+  --color-base-250: oklch(80.5% 0.008 255);
+  --color-base-300: oklch(73.5% 0.009 255);
+  --color-base-350: oklch(65% 0.01 255);
+  --color-base-400: oklch(55% 0.011 255);
+  --color-base-450: oklch(51% 0.012 255);
+  --color-base-500: oklch(47.5% 0.012 255);
+  --color-base-550: oklch(44% 0.012 255);
+  --color-base-600: oklch(40.5% 0.012 255);
+  --color-base-650: oklch(37% 0.012 255);
+  --color-base-700: oklch(33.5% 0.012 255);
+  --color-base-750: oklch(30% 0.012 255);
+  --color-base-800: oklch(25% 0.012 255);
+  --color-base-850: oklch(20.5% 0.011 255);
+  --color-base-900: oklch(17% 0.011 255);
+  --color-base-950: oklch(14% 0.01 255);
+  --color-base-1000: oklch(11.5% 0.01 255);
+
+  /* ---- Accent ramp — slate-blue, hue 255 ----------------------------------- */
+  /* Payload's "success" ramp is its accent: focus ring, links, selection,
+     active states. Chroma peaks at 0.14 — calm enough for an interface people
+     sit in all day. */
+  --color-success-50: oklch(97% 0.014 255);
+  --color-success-100: oklch(94.5% 0.028 255);
+  --color-success-150: oklch(90.5% 0.045 255);
+  --color-success-200: oklch(86% 0.065 255);
+  --color-success-250: oklch(80.5% 0.085 255);
+  --color-success-300: oklch(74.5% 0.105 255);
+  --color-success-350: oklch(68% 0.12 255);
+  --color-success-400: oklch(61% 0.135 255);
+  --color-success-450: oklch(57% 0.14 255);
+  --color-success-500: oklch(53% 0.14 255);
+  --color-success-550: oklch(49% 0.135 255);
+  --color-success-600: oklch(45% 0.125 255);
+  --color-success-650: oklch(41% 0.115 255);
+  --color-success-700: oklch(37% 0.1 255);
+  --color-success-750: oklch(32.5% 0.085 255);
+  --color-success-800: oklch(28% 0.07 255);
+  --color-success-850: oklch(23.5% 0.055 255);
+  --color-success-900: oklch(19% 0.04 255);
+  --color-success-950: oklch(15% 0.03 255);
+
   --color-blue-50: var(--color-success-50);
   --color-blue-100: var(--color-success-100);
   --color-blue-150: var(--color-success-150);
@@ -110,444 +125,281 @@
   --color-blue-900: var(--color-success-900);
   --color-blue-950: var(--color-success-950);
 
-  /* ---- Error ramp (Day) — coral chord, hue 18 --------------------------- */
-  /* Lumen's secondary chromatic. Replaces Payload's stock red so validation
-     sits in the same family as the accent instead of fighting it.
-     --theme-error-500 carries 20 of the 60 error usages (required asterisk,
-     validation text, error borders), so it is the index that has to read. */
-  --color-error-50: oklch(96.5% 0.016 18);
-  --color-error-100: oklch(94% 0.03 18);
-  --color-error-150: oklch(90.5% 0.05 18);
-  --color-error-200: oklch(87% 0.07 18);
-  --color-error-250: oklch(82.5% 0.095 18);
-  --color-error-300: oklch(78% 0.115 18);
-  --color-error-350: oklch(72% 0.14 18);
-  --color-error-400: oklch(65% 0.16 18);
-  --color-error-450: oklch(57% 0.175 18);
-  --color-error-500: oklch(50% 0.18 18);
-  --color-error-550: oklch(46% 0.172 18);
-  --color-error-600: oklch(42% 0.162 18);
-  --color-error-650: oklch(38% 0.148 18);
-  --color-error-700: oklch(34% 0.132 18);
-  --color-error-750: oklch(30% 0.115 18);
-  --color-error-800: oklch(26% 0.098 18);
-  --color-error-850: oklch(22% 0.08 18);
-  --color-error-900: oklch(18% 0.06 18);
-  --color-error-950: oklch(14% 0.042 18);
+  /* ---- Error ramp — red, hue 27 ------------------------------------------- */
+  /* 500 carries validation text and error borders: ~4.7:1 on the canvas. */
+  --color-error-50: oklch(97% 0.014 27);
+  --color-error-100: oklch(94% 0.03 27);
+  --color-error-150: oklch(90% 0.05 27);
+  --color-error-200: oklch(85.5% 0.075 27);
+  --color-error-250: oklch(80% 0.1 27);
+  --color-error-300: oklch(74% 0.125 27);
+  --color-error-350: oklch(67.5% 0.15 27);
+  --color-error-400: oklch(61% 0.17 27);
+  --color-error-450: oklch(57% 0.18 27);
+  --color-error-500: oklch(54% 0.19 27);
+  --color-error-550: oklch(50% 0.185 27);
+  --color-error-600: oklch(46% 0.175 27);
+  --color-error-650: oklch(42% 0.16 27);
+  --color-error-700: oklch(38% 0.145 27);
+  --color-error-750: oklch(34% 0.125 27);
+  --color-error-800: oklch(29.5% 0.105 27);
+  --color-error-850: oklch(25% 0.085 27);
+  --color-error-900: oklch(20.5% 0.065 27);
+  --color-error-950: oklch(16% 0.05 27);
 
-  /* ---- Type — three families, Lumen's documented stack ------------------ */
-  --font-display: 'Instrument Serif', 'Tiempos Headline', ui-serif, Georgia, serif;
-  --font-body: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, Monaco, monospace;
-  --font-serif: var(--font-display);
+  /* ---- Warning ramp — amber, hue 70 --------------------------------------- */
+  /* Drafts, unsaved changes, locked documents. 600 is the text slot. */
+  --color-warning-50: oklch(97% 0.02 70);
+  --color-warning-100: oklch(94% 0.04 70);
+  --color-warning-150: oklch(90% 0.065 70);
+  --color-warning-200: oklch(86% 0.085 70);
+  --color-warning-250: oklch(81% 0.105 70);
+  --color-warning-300: oklch(76% 0.12 70);
+  --color-warning-350: oklch(71% 0.13 70);
+  --color-warning-400: oklch(66% 0.135 70);
+  --color-warning-450: oklch(61% 0.13 70);
+  --color-warning-500: oklch(56% 0.125 70);
+  --color-warning-550: oklch(51.5% 0.115 70);
+  --color-warning-600: oklch(47% 0.105 70);
+  --color-warning-650: oklch(42.5% 0.095 70);
+  --color-warning-700: oklch(38% 0.085 70);
+  --color-warning-750: oklch(33.5% 0.075 70);
+  --color-warning-800: oklch(29% 0.065 70);
+  --color-warning-850: oklch(24.5% 0.055 70);
+  --color-warning-900: oklch(20% 0.045 70);
+  --color-warning-950: oklch(16% 0.035 70);
 
-  /* Machined, not soft — Lumen reads as instrument-grade. */
-  --style-radius-s: 2px;
-  --style-radius-m: 4px;
-  --style-radius-l: 6px;
+  /* ---- Type ------------------------------------------------------------------ */
+  /* Three voices, each with one job:
+     - Bricolage Grotesque — headings. Ink traps and a wide optical-size range
+       give titles personality without hurting legibility.
+     - Satoshi — everything you read and type in: fields, lists, nav, buttons.
+       Geometric and friendly, still crisp at 13–14px.
+     - Space Mono — two small places only: nav group labels and table column
+       headers, plus Payload's own code fields. */
+  --cms-font-display: 'Bricolage Grotesque', 'Satoshi', system-ui, sans-serif;
+  --font-body: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Space Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif: var(--font-body);
 
-  --accessibility-outline: 2px solid var(--lumen-accent);
-
-  /* Notification toasts — deliberately NOT --lumen-accent or the coral error
-     chord above; those are reused elsewhere (links/focus/validation) and
-     don't read as unambiguous status color. Conventional blue/red instead. */
-  --lumen-toast-success-text: oklch(42% 0.16 250);
-  --lumen-toast-success-border: oklch(78% 0.09 250);
-  --lumen-toast-success-bg: oklch(95% 0.03 250);
-  --lumen-toast-error-text: oklch(45% 0.19 25);
-  --lumen-toast-error-border: oklch(80% 0.1 25);
-  --lumen-toast-error-bg: oklch(96% 0.03 25);
-
-  /* Login panel tagline — sits on a photo now, not the flat grid it was
-     designed against, so it can't inherit the Day/Night accent swap (Day's
-     indigo reads fine on light chrome but disappears against a dark photo
-     scrim). One warm tone, held constant regardless of admin theme, tuned
-     for contrast against the scrim in .login-panel::before below. */
-  --lumen-tagline-on-photo: oklch(85% 0.14 70);
-
-  /* Supporting sentence under the tagline — quieter than the quote, but still
-     needs to survive the same dark scrim, so it's held constant too. */
-  --lumen-panel-desc-on-photo: oklch(92% 0.01 265 / 0.78);
+  --style-radius-s: 4px;
+  --style-radius-m: 6px;
+  --style-radius-l: 8px;
 }
-
-html[data-theme='dark'] {
-  /* ---- Lumen semantic tokens (Night Foundry) ---------------------------- */
-  --lumen-accent: oklch(75% 0.135 56); /* brass — emits, without the glare */
-  --lumen-accent-ink: oklch(17.5% 0.018 265);
-  --lumen-rule: oklch(88% 0.016 265 / 0.14);
-  --lumen-grid: oklch(88% 0.016 265 / 0.05);
-  --lumen-emit: oklch(75% 0.135 56 / 0.05);
-  --lumen-card-emit: oklch(75% 0.135 56 / 0.05);
-  --lumen-card-emit-hover: oklch(75% 0.135 56 / 0.12);
-
-  --lumen-nav-hover: oklch(88% 0.016 265 / 0.07);
-  --lumen-nav-active: oklch(75% 0.135 56 / 0.13);
-  --lumen-nav-heading: oklch(76% 0.026 265); /* 8.83:1 on Night paper */
-  --lumen-nav-chevron: oklch(66% 0.028 265); /* 6.09:1 */
-
-  /* Cream, carrying just enough warmth (hue 85, chroma 0.02) to echo the brass
-     accent without becoming a chromatic surface of its own. */
-  --lumen-btn-bg: oklch(93% 0.02 85);
-  --lumen-btn-ink: oklch(17.5% 0.018 265);
-  --lumen-btn-hover-bg: oklch(97% 0.016 85);
-
-  /* ---- Accent ramp (Night) — brass, hue 56 ------------------------------ */
-  /* Light end first, same ordering as every Payload ramp: dark mode reads it
-     from the opposite end, so index 200–450 is what actually shows.
-     Nudged off hue 50 toward 56 and down to 0.135 chroma — at 0.17/H50 a
-     full-width button read as safety-orange against the dark canvas. */
-  --color-success-50: oklch(97% 0.016 56);
-  --color-success-100: oklch(94.5% 0.032 56);
-  --color-success-150: oklch(91% 0.055 56);
-  --color-success-200: oklch(87.5% 0.08 56);
-  --color-success-250: oklch(84% 0.105 56);
-  --color-success-300: oklch(79.5% 0.125 56);
-  --color-success-350: oklch(75% 0.135 56);
-  --color-success-400: oklch(71% 0.135 56);
-  --color-success-450: oklch(67% 0.13 56);
-  --color-success-500: oklch(62.5% 0.125 56);
-  --color-success-550: oklch(58% 0.118 56);
-  --color-success-600: oklch(53.5% 0.11 56);
-  --color-success-650: oklch(49% 0.1 56);
-  --color-success-700: oklch(44% 0.09 56);
-  --color-success-750: oklch(39% 0.078 56);
-  --color-success-800: oklch(34% 0.066 56);
-  --color-success-850: oklch(29% 0.054 56);
-  --color-success-900: oklch(23% 0.042 56);
-  --color-success-950: oklch(17% 0.03 56);
-
-  /* ---- Error ramp (Night) — coral chord, hue 18 ------------------------- */
-  /* Dark mode reads --theme-error-500 from --color-error-450, so the anchor
-     moves up the ramp: 450 carries Lumen's night coral oklch(68% 0.16 18). */
-  --color-error-50: oklch(97% 0.014 18);
-  --color-error-100: oklch(94.5% 0.028 18);
-  --color-error-150: oklch(91% 0.048 18);
-  --color-error-200: oklch(87.5% 0.07 18);
-  --color-error-250: oklch(84% 0.092 18);
-  --color-error-300: oklch(80% 0.115 18);
-  --color-error-350: oklch(76% 0.135 18);
-  --color-error-400: oklch(72% 0.15 18);
-  --color-error-450: oklch(68% 0.16 18);
-  --color-error-500: oklch(63.5% 0.163 18);
-  --color-error-550: oklch(59% 0.16 18);
-  --color-error-600: oklch(54.5% 0.153 18);
-  --color-error-650: oklch(50% 0.143 18);
-  --color-error-700: oklch(45% 0.13 18);
-  --color-error-750: oklch(40% 0.115 18);
-  --color-error-800: oklch(35% 0.1 18);
-  --color-error-850: oklch(30% 0.082 18);
-  --color-error-900: oklch(24% 0.064 18);
-  --color-error-950: oklch(18% 0.045 18);
-
-  /* Notification toasts (Night) — same blue/red hues as Day, re-lit for a dark
-     canvas: bright text on a dark tinted chip instead of dark text on light. */
-  --lumen-toast-success-text: oklch(75% 0.14 250);
-  --lumen-toast-success-border: oklch(40% 0.09 250);
-  --lumen-toast-success-bg: oklch(20% 0.05 250);
-  --lumen-toast-error-text: oklch(72% 0.17 25);
-  --lumen-toast-error-border: oklch(42% 0.1 25);
-  --lumen-toast-error-bg: oklch(20% 0.06 25);
-}
-
-/* ---- Two-register typography -------------------------------------------- */
-/* Lumen's signature: quiet lowercase prose against loud UPPERCASE mono labels.
-   Applied to chrome only — never to a field value or a document title, where
-   lowercasing would misrepresent stored data. */
 
 body {
   font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Register 1 — lowercase prose, on config-supplied chrome. */
-.nav__link,
-.dashboard__label,
-.card__title,
-.list-header__title,
-.btn__label,
-.nav-group__toggle {
-  text-transform: none;
-}
-
-/* Register 2 — UPPERCASE mono, the machine readout. */
-.field-label,
-.table thead th {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-/* Display serif on the headline surfaces. Roman, weight 400 — Instrument Serif
-   has no italic in Lumen and carries emphasis through size alone. */
+/* ---- Headings --------------------------------------------------------------- */
+/* Roman only — weight and tight tracking carry the emphasis. */
 .dashboard__label,
 .list-header__title,
 .render-title {
-  font-family: var(--font-display);
+  font-family: var(--cms-font-display);
   font-style: normal;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
-/* ---- Primary button — neutral inversion ---------------------------------- */
-/* Deliberately NOT the accent. A full-width chromatic block is the loudest
-   thing on the page and the save/login button does not need to shout; the
-   accent stays on focus rings, selection and the active nav row. The button
-   inverts against its canvas instead: cream on Night, near-ink on Day. */
+.card__title {
+  font-family: var(--cms-font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-text);
+}
+
+/* The mono label voice — small, uppercase, a little typewritten. */
+.nav-group__toggle,
+.table thead th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cms-muted);
+}
+
+/* ---- Buttons ---------------------------------------------------------------- */
+/* Primary is the one accent fill on a screen (Save, Publish, Create new).
+   Secondary is a quiet bordered button instead of Payload's heavy ink ring. */
 .btn--style-primary {
-  --bg-color: var(--lumen-btn-bg);
-  --color: var(--lumen-btn-ink);
-  --hover-bg: var(--lumen-btn-hover-bg);
-  --hover-color: var(--lumen-btn-ink);
+  --bg-color: var(--cms-accent);
+  --color: var(--cms-on-accent);
+  --hover-bg: var(--cms-accent-hover);
+  --hover-color: var(--cms-on-accent);
   --box-shadow: none;
 }
 
-/* ---- Blueprint grid ------------------------------------------------------ */
-/* Lumen's "engineered, not vibed" signal: 48px ruled cells at ~4%, with the
-   canvas emitting through them. Login and dashboard only.
-   The grid hangs off the full-height wrapper rather than .dashboard itself —
-   .dashboard is only as tall as its cards, so painting it there cuts the grid
-   off mid-viewport. :has() scopes it to the dashboard route without markup. */
-.template-minimal,
-.template-default__wrap:has(.dashboard) {
-  background:
-    linear-gradient(var(--lumen-grid) 1px, transparent 1px) 0 0 / 48px 48px,
-    linear-gradient(90deg, var(--lumen-grid) 1px, transparent 1px) 0 0 / 48px 48px,
-    radial-gradient(60% 50% at 78% 30%, var(--lumen-emit) 0%, transparent 65%),
-    var(--theme-bg);
+.btn--style-secondary {
+  --bg-color: var(--theme-elevation-0);
+  --color: var(--theme-text);
+  --box-shadow: inset 0 0 0 1px var(--theme-elevation-200);
+  --hover-bg: var(--theme-elevation-50);
+  --hover-color: var(--theme-text);
+  --hover-box-shadow: inset 0 0 0 1px var(--theme-elevation-300);
 }
 
-/* ---- Login card ----------------------------------------------------------- */
-/* Login was the one screen not using the system: a logo and a bare form
-   floating on the grid, no frame. Gives it the same hairline + emission
-   language as .card, plus a one-time accent bar — the login's single moment
-   of color, everywhere else the accent stays on rings/selection/active nav.
-   :has() scopes this to the login route only; forgot/reset-password share the
-   same TemplateMinimal shell but never render .login__brand. */
-.template-minimal:has(.login__brand) {
-  .template-minimal__wrap {
-    position: relative;
-    overflow: hidden;
-    padding: calc(var(--base) * 3) calc(var(--base) * 2.5);
-    background:
-      radial-gradient(120% 100% at 50% 0%, var(--lumen-card-emit) 0%, transparent 70%),
-      var(--theme-bg);
-    border: 1px solid var(--lumen-rule);
-    border-radius: var(--style-radius-l);
-  }
-
-  .template-minimal__wrap::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 3px;
-    background: var(--lumen-accent);
-  }
-
-  .login__brand {
-    margin-bottom: var(--base);
-    padding-bottom: calc(var(--base) * 1.5);
-    border-bottom: 1px solid var(--lumen-rule);
-  }
-
-  .login__form__inputWrap {
-    gap: calc(var(--base) * 1.25);
-  }
-
-  .login__form > a {
-    display: block;
-    margin-block: calc(var(--base) / 2) var(--base);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--color-base-500);
-  }
-
-  .login__form > a:hover,
-  .login__form > a:focus-visible {
-    color: var(--lumen-accent);
-  }
+.btn__label {
+  font-weight: 500;
 }
 
-/* Right panel — hidden by default (mobile keeps the single-column card above).
-   Built from the same grid + emission tokens as the page background, so it
-   needs no image asset; the tagline reuses Lumen's own documented voice
-   ("engineered, not vibed") rather than an invented claim. */
-.login-panel {
-  position: relative;
-  display: none;
-  padding: calc(var(--base) * 3);
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  background-image: url('https://plus.unsplash.com/premium_photo-1682125139523-92d7def89cd1?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  border-left: 1px solid var(--lumen-rule);
+/* ---- Tables (list views) ---------------------------------------------------- */
+/* Divider rows instead of zebra stripes: easier to scan a long list of posts or
+   media, and the hover row shows which one you're about to open. */
+.table thead th {
+  white-space: nowrap;
+  border-bottom: 1px solid var(--theme-border-color);
 }
 
-/* Scrim so the tagline reads over any photo — a fixed neutral-dark wash,
-   independent of the photo's own colors and of light/dark admin theme. */
-.login-panel::before {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  inset: auto 0 0 0;
-  height: 65%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.45) 55%, transparent 100%);
-  pointer-events: none;
+.table tbody tr:nth-child(odd) {
+  background: transparent;
 }
 
-.login-panel__tagline {
-  position: relative;
-  z-index: 1;
-  max-width: 14ch;
-  text-align: left;
-  font-family: var(--font-display);
-  font-style: normal;
-  font-weight: 400;
-  font-size: clamp(1.5rem, 1rem + 2.4vw, 2.25rem);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  color: var(--lumen-tagline-on-photo);
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+.table tbody td {
+  border-bottom: 1px solid var(--cms-row-divider);
 }
 
-.login-panel__description {
-  position: relative;
-  z-index: 1;
-  max-width: 34ch;
-  text-align: left;
-  margin-top: calc(var(--base) * 0.75);
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  color: var(--lumen-panel-desc-on-photo);
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
+.table tbody tr {
+  transition: background var(--cms-dur) var(--cms-ease);
 }
 
-/* Split screen from tablet-landscape up. Below this the panel stays hidden
-   and login keeps the single-column card tested above. */
-@media (min-width: 861px) {
-  .template-minimal--width-normal:has(.login__brand) .template-minimal__wrap {
-    max-width: min(920px, 92vw);
-  }
-
-  .template-minimal:has(.login__brand) .template-minimal__wrap {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    padding: 0;
-  }
-
-  /* the panel carries the color now; the top bar would double up */
-  .template-minimal:has(.login__brand) .template-minimal__wrap::before {
-    display: none;
-  }
-
-  .template-minimal:has(.login__brand) .login__brand {
-    grid-column: 1;
-    grid-row: 1;
-    padding: calc(var(--base) * 3) calc(var(--base) * 2.5) calc(var(--base) * 1.5);
-    margin-bottom: 0;
-  }
-
-  .template-minimal:has(.login__brand) .login__form {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: start;
-    padding: var(--base) calc(var(--base) * 2.5) calc(var(--base) * 3);
-  }
-
-  .template-minimal:has(.login__brand) .login-panel {
-    display: flex;
-    grid-column: 2;
-    grid-row: 1 / -1;
-  }
+.table tbody tr:hover {
+  background: var(--cms-row-hover);
 }
 
-/* ---- Hairline cards with inner emission ---------------------------------- */
-/* Lit from within, not dropped. Emission capped at 4% rest / 10% hover so the
-   cards never read as accent-tinted. */
+/* ---- Dashboard cards ---------------------------------------------------------- */
+.dashboard__card-list {
+  gap: 12px;
+}
+
 .card {
-  background:
-    radial-gradient(120% 100% at 50% 0%, var(--lumen-card-emit) 0%, transparent 70%),
-    var(--theme-bg);
-  border-color: var(--lumen-rule);
-  box-shadow: none;
+  background: var(--theme-elevation-0);
+  border-color: var(--theme-border-color);
+  box-shadow: var(--cms-shadow-sm);
   transition:
-    transform 220ms var(--lumen-ease-soft),
-    background 220ms var(--lumen-ease-soft),
-    border-color 220ms var(--lumen-ease-soft);
+    border-color var(--cms-dur) var(--cms-ease),
+    box-shadow var(--cms-dur) var(--cms-ease);
 }
 
 .card--has-onclick:hover {
-  background:
-    radial-gradient(120% 100% at 50% 0%, var(--lumen-card-emit-hover) 0%, transparent 70%),
-    var(--theme-bg);
-  border-color: var(--lumen-rule);
-  box-shadow: none;
-  transform: translateY(-4px);
+  background: var(--theme-elevation-0);
+  border-color: var(--theme-elevation-250);
+  box-shadow: var(--cms-shadow-md);
+}
+
+/* Dashboard items lift 2px on hover (and on keyboard focus), then settle back
+   under the press so the click feels physical. Transform only — no layout. */
+.dashboard__card-list .card {
+  transition:
+    transform var(--cms-dur-lift) var(--cms-ease),
+    background-color var(--cms-dur-lift) var(--cms-ease),
+    border-color var(--cms-dur) var(--cms-ease),
+    box-shadow var(--cms-dur-lift) var(--cms-ease);
+}
+
+.dashboard__card-list .card__title {
+  transition: color var(--cms-dur-lift) var(--cms-ease);
+}
+
+.dashboard__card-list .card--has-onclick:hover,
+.dashboard__card-list .card--has-onclick:focus-within {
+  transform: translateY(-2px);
+  background: var(--cms-card-hover-bg);
+  border-color: var(--cms-card-hover-border);
+  box-shadow: var(--cms-shadow-lift);
+}
+
+.dashboard__card-list .card--has-onclick:hover .card__title,
+.dashboard__card-list .card--has-onclick:focus-within .card__title {
+  color: var(--cms-card-hover-title);
+}
+
+.dashboard__card-list .card--has-onclick:active {
+  transform: translateY(0);
+  box-shadow: var(--cms-shadow-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card,
-  .card--has-onclick:hover {
-    transition-duration: 0.01ms;
+  .dashboard__card-list .card--has-onclick:hover,
+  .dashboard__card-list .card--has-onclick:focus-within,
+  .dashboard__card-list .card--has-onclick:active {
     transform: none;
   }
 }
 
-/* ---- Sidebar ------------------------------------------------------------- */
-/* Payload ships nav links as bare text that underlines on hover, with the group
-   headings at body size. Both are restyled here: links become real rows with a
-   fill, headings drop into the mono label register. No markup touched.
-   Note: px, not Payload's base() — that Sass function lives in vars.scss, which
-   this file deliberately does not @import (it would pull in the whole toolkit). */
-
+/* ---- Sidebar ------------------------------------------------------------------ */
+/* A tinted rail so navigation reads apart from the working area; compact
+   14px rows instead of Payload's 17.5px list; the current route gets a filled
+   row plus a thin accent bar. px, not Payload's base() — that Sass function
+   lives in vars.scss, which this file does not @import. */
 .nav {
-  border-right: 1px solid var(--lumen-rule);
+  background: var(--cms-sidebar-bg);
+  border-inline-end: 1px solid var(--theme-border-color);
 }
 
-[dir='rtl'] .nav {
-  border-right: none;
-  border-left: 1px solid var(--lumen-rule);
-}
-
-/* Group headings join the mono label register used by field labels and table
-   headers, so the whole admin reads as one instrument panel.
-   Payload paints these with --theme-elevation-400 and the chevron with
-   --theme-elevation-200 — measured, that is 3.36:1 and 1.63:1 on Day paper,
-   against floors of 4.5:1 (11px text) and 3:1 (UI icon). Hence explicit tokens.
-   NOTE: uppercase here deliberately overrides the Register 1 rule above. It is
-   the only place it does. Group headings are labels, not prose — the same
-   register as .field-label and .table thead th. Delete the line to revert. */
 .nav-group {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+}
+
+/* Home (dashboard) and Profile (account) links above the collection groups
+   (admin.components.beforeNavLinks → src/components/NavHome). They reuse
+   Payload's nav__link markup, so row, hover and active styles below apply. */
+.nav-home {
+  width: 100%;
+  margin-bottom: 16px;
 }
 
 .nav-group__toggle {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--lumen-nav-heading);
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  font-weight: 700;
+  color: var(--theme-text);
 }
 
 .nav-group__toggle:hover,
 .nav-group__toggle:focus-visible {
-  color: var(--theme-elevation-1000);
+  color: var(--cms-card-hover-title);
 }
 
-/* Label, then a hairline running out to the sidebar edge. The heading reads as
-   a section rule rather than a dim word floating above the links.
-   .nav-group__label is a real div in Payload's markup, so the ::after can be a
-   flex sibling of the text without touching any component. */
+/* Active group — the collection you're on lives inside it. Payload only
+   renders .nav__link-indicator in the selected link, and AnimateHeight keeps
+   collapsed children in the DOM (display: none), so a closed group is marked
+   too. The dot makes it read differently from a plain hover. */
+.nav-group:has(.nav__link-indicator) .nav-group__toggle {
+  color: var(--cms-card-hover-title);
+}
+
+.nav-group:has(.nav__link-indicator) .nav-group__label::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: -4px;
+  border-radius: 50%;
+  background: var(--cms-accent);
+}
+
+.nav-group:has(.nav__link-indicator) .nav-group__label::after {
+  background: var(--cms-card-hover-border);
+}
+
+.nav-group:has(.nav__link-indicator) .nav-group__toggle .stroke {
+  stroke: var(--cms-card-hover-title);
+}
+
+/* Label, then a hairline running out to the chevron. .nav-group__label is a
+   real element in Payload's markup, so the line is a flex sibling of the text. */
 .nav-group__label {
   display: flex;
   align-items: center;
@@ -560,97 +412,268 @@ body {
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--lumen-rule);
+  background: var(--theme-border-color);
 }
 
-/* Payload nudges the chevron up 4px to sit against align-items: flex-start;
-   the toggle is centre-aligned now, so that nudge has to go. */
+/* Payload nudges the chevron up 4px for align-items: flex-start; the toggle is
+   centred now, so the nudge goes. */
 .nav-group__toggle svg {
   margin-top: 0;
 }
 
-.nav-group__indicator .stroke {
-  stroke: var(--lumen-nav-chevron);
-}
-
-.nav-group__toggle:hover .stroke,
-.nav-group__toggle:focus-visible .stroke {
-  stroke: var(--theme-elevation-1000);
-}
-
-/* Rows, not bare text. The negative inline margin lets the fill bleed past the
-   text column to the sidebar's padding edge, so the row reads full-width. */
 .nav__link {
-  padding-block: 7px;
+  font-size: 14px;
+  line-height: 20px;
+  padding-block: 6px;
   padding-inline: 10px;
   margin-inline: -10px;
   width: calc(100% + 20px);
   border-radius: var(--style-radius-m);
-  transition:
-    background 160ms var(--lumen-ease-soft),
-    color 160ms var(--lumen-ease-soft);
+  white-space: nowrap;
+  transition: background var(--cms-dur) var(--cms-ease);
 }
 
 a.nav__link:hover,
 a.nav__link:focus-visible {
-  text-decoration: none; /* Payload underlines here; the fill replaces it */
-  background: var(--lumen-nav-hover);
-  color: var(--theme-elevation-1000);
+  text-decoration: none;
+  background: var(--cms-nav-hover);
 }
 
-/* Payload marks the current route either with .active or by rendering the
-   indicator element — match both so the row never half-highlights. */
 .nav__link.active,
 .nav__link:has(.nav__link-indicator) {
-  background: var(--lumen-nav-active);
-  color: var(--theme-elevation-1000);
+  background: var(--cms-nav-active);
+  font-weight: 500;
 }
 
-/* The indicator sits at base(-1) by default, i.e. outside the link box. With
-   the row fill it belongs on the row's own leading edge. */
 .nav__link-indicator {
   inset-inline-start: 0;
   top: 50%;
-  height: 18px;
+  height: 16px;
   transform: translateY(-50%);
   border-radius: 0 2px 2px 0;
-  background: var(--lumen-accent);
+  background: var(--cms-accent);
+}
+
+/* Tree lines for an open group. Content is indented; each link draws its own
+   vertical segment (::before) and a short horizontal branch (::after), and the
+   last link's segment stops at its midpoint so the tree ends in └. Everything
+   stays inside the group's content box — Payload wraps it in an
+   AnimateHeight container that clips overflow. Rows don't bleed past the
+   edges here for the same reason. */
+.nav-group__content {
+  margin-inline-start: 4px;
+  padding-inline-start: 12px;
+}
+
+.nav-group__content > .nav__link {
+  position: relative;
+  margin-inline: 0;
+  width: 100%;
+  padding-inline: 8px;
+}
+
+.nav-group__content > .nav__link::before,
+.nav-group__content > .nav__link::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: -12px;
+  background: var(--theme-border-color);
+  pointer-events: none;
+}
+
+.nav-group__content > .nav__link::before {
+  inset-block: 0;
+  width: 1px;
+}
+
+.nav-group__content > .nav__link:last-child::before {
+  inset-block-end: 50%;
+}
+
+.nav-group__content > .nav__link::after {
+  top: 50%;
+  width: 8px;
+  height: 1px;
+}
+
+/* The current collection lights its branch: the accent bar sits on the tree
+   line and the horizontal tick takes the accent too. */
+.nav-group__content .nav__link-indicator {
+  inset-inline-start: -13px;
+  width: 3px;
+  height: 20px;
+  border-radius: 2px;
+}
+
+.nav-group__content > .nav__link:has(.nav__link-indicator)::after {
+  background: var(--cms-accent);
+}
+
+/* Logout — a full-width button with icon and label at the bottom of the
+   sidebar (admin.components.logout.Button → src/components/LogoutButton). */
+.nav__controls {
+  width: 100%;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--theme-text);
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-border-color);
+  border-radius: var(--style-radius-m);
+  box-shadow: var(--cms-shadow-sm);
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    border-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.logout-button:hover {
+  text-decoration: none;
+  color: var(--cms-card-hover-title);
+  background: var(--cms-card-hover-bg);
+  border-color: var(--cms-card-hover-border);
+}
+
+.logout-button:active {
+  box-shadow: none;
+}
+
+.logout-button:focus-visible {
+  outline: var(--accessibility-outline);
+  outline-offset: var(--accessibility-outline-offset);
+}
+
+.logout-button .icon--logout {
+  flex: none;
+  inline-size: 16px;
+  block-size: 16px;
+}
+
+/* ---- Login -------------------------------------------------------------------- */
+/* A plain card on a tinted canvas, with the photo panel beside it from tablet
+   landscape up. :has() scopes the card rules to the login route;
+   forgot/reset-password share the shell but not .login__brand. */
+.template-minimal {
+  background: var(--theme-elevation-50);
+}
+
+.template-minimal:has(.login__brand) {
+  .template-minimal__wrap {
+    overflow: hidden;
+    padding: calc(var(--base) * 2.5) calc(var(--base) * 2);
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-border-color);
+    border-radius: var(--style-radius-l);
+    box-shadow: var(--cms-shadow-sm);
+  }
+
+  .login__brand {
+    margin-bottom: var(--base);
+  }
+}
+
+/* Photo panel — hidden below 861px, where login stays a single-column card. */
+.login-panel {
+  position: relative;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: calc(var(--base) * 2.5) calc(var(--base) * 2);
+  background-color: var(--cms-photo-fallback);
+  background-image: var(--cms-login-photo);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-inline-start: 1px solid var(--theme-border-color);
+}
+
+/* Scrim so the tagline reads over any part of the photo. */
+.login-panel::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: auto 0 0 0;
+  height: 65%;
+  background: linear-gradient(to top, var(--cms-scrim-strong) 0%, var(--cms-scrim-soft) 55%, transparent 100%);
+  pointer-events: none;
+}
+
+.login-panel__tagline {
+  position: relative;
+  z-index: 1;
+  max-width: 16ch;
+  font-family: var(--cms-font-display);
+  font-style: normal;
+  font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--cms-on-photo);
+  text-shadow: var(--cms-photo-text-shadow);
+  overflow-wrap: anywhere;
+}
+
+.login-panel__description {
+  position: relative;
+  z-index: 1;
+  max-width: 34ch;
+  margin-top: calc(var(--base) * 0.75);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--cms-on-photo-muted);
+  text-shadow: var(--cms-photo-text-shadow);
+}
+
+@media (min-width: 861px) {
+  .template-minimal--width-normal:has(.login__brand) .template-minimal__wrap {
+    max-width: min(920px, 92vw);
+  }
+
+  .template-minimal:has(.login__brand) .template-minimal__wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    padding: 0;
+  }
+
+  .template-minimal:has(.login__brand) .login__brand {
+    grid-column: 1;
+    grid-row: 1;
+    padding: calc(var(--base) * 2.5) calc(var(--base) * 2) var(--base);
+    margin-bottom: 0;
+  }
+
+  .template-minimal:has(.login__brand) .login__form {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    padding: 0 calc(var(--base) * 2) calc(var(--base) * 2.5);
+  }
+
+  .template-minimal:has(.login__brand) .login-panel {
+    display: flex;
+    grid-column: 2;
+    grid-row: 1 / -1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav__link {
+  .card,
+  .nav__link,
+  .table tbody tr {
     transition-duration: 0.01ms;
-  }
-}
-
-/* ---- Notification toasts -------------------------------------------------- */
-/* Scoped to the toast pills only — leaves --color-success and --color-error
-   untouched, since those ramps are load-bearing elsewhere (focus rings, links,
-   active nav, field validation). Status color here is unambiguous instead. */
-.payload-toast-item.toast-success {
-  color: var(--lumen-toast-success-text);
-  border-color: var(--lumen-toast-success-border);
-  background-color: var(--lumen-toast-success-bg);
-
-  .payload-toast-close-button {
-    color: var(--lumen-toast-success-text);
-  }
-
-  .payload-toast-close-button:hover {
-    color: var(--lumen-toast-success-border);
-  }
-}
-
-.payload-toast-item.toast-error {
-  color: var(--lumen-toast-error-text);
-  border-color: var(--lumen-toast-error-border);
-  background-color: var(--lumen-toast-error-bg);
-
-  .payload-toast-close-button {
-    color: var(--lumen-toast-error-text);
-  }
-
-  .payload-toast-close-button:hover {
-    color: var(--lumen-toast-error-border);
   }
 }

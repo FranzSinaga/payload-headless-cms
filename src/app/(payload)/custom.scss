@@ -209,23 +209,23 @@
      - nav-active: the current sidebar link — a brighter pane on the glass rail. */
   --cms-glass-chrome: oklch(99.5% 0.002 255 / 0.6);
   --cms-nav-active: oklch(100% 0 0 / 0.72);
-  --cms-glass-sheet: oklch(99.5% 0.002 255 / 0.76);
+  --cms-glass-sheet: oklch(99.5% 0.002 255 / 0.78);
   --cms-glass-card: oklch(100% 0 0 / 0.55);
   --cms-glass-tint: oklch(25% 0.02 255 / 0.04);
   --cms-glass-border: oklch(100% 0 0 / 0.75);
   --cms-glass-line: oklch(25% 0.02 255 / 0.1);
-  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.6);
-  --cms-glass-shadow: 0 10px 24px -14px oklch(30% 0.05 255 / 0.28);
-  --cms-glass-blur: blur(20px) saturate(160%);
+  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.7);
+  --cms-glass-shadow: 0 16px 40px -20px oklch(30% 0.05 255 / 0.35);
+  --cms-glass-blur: blur(32px) saturate(165%);
   --cms-glass-row-hover: color-mix(in oklch, var(--theme-success-100) 45%, transparent);
 
-  --cms-blob-a: oklch(74% 0.13 255 / 0.55);
-  --cms-blob-b: oklch(76% 0.11 300 / 0.45);
-  --cms-blob-c: oklch(82% 0.09 195 / 0.45);
+  --cms-blob-a: oklch(74% 0.13 255 / 0.5);
+  --cms-blob-b: oklch(76% 0.11 300 / 0.42);
+  --cms-blob-c: oklch(82% 0.09 195 / 0.42);
   --cms-backdrop:
-    radial-gradient(42vmax 42vmax at 6% 0%, var(--cms-blob-a), transparent 70%),
-    radial-gradient(38vmax 38vmax at 100% 10%, var(--cms-blob-b), transparent 70%),
-    radial-gradient(46vmax 46vmax at 55% 105%, var(--cms-blob-c), transparent 70%);
+    radial-gradient(55vmax 55vmax at 6% 0%, var(--cms-blob-a), transparent 78%),
+    radial-gradient(50vmax 50vmax at 100% 10%, var(--cms-blob-b), transparent 78%),
+    radial-gradient(60vmax 60vmax at 55% 105%, var(--cms-blob-c), transparent 78%);
 }
 
 /* Dark mode: smoky glass — fills turn translucent slate, edges become faint
@@ -234,12 +234,12 @@ html[data-theme='dark'] {
   --cms-glass-chrome: oklch(21% 0.012 255 / 0.62);
   --cms-nav-active: oklch(100% 0 0 / 0.09);
   --cms-glass-sheet: oklch(19% 0.012 255 / 0.8);
-  --cms-glass-card: oklch(100% 0 0 / 0.04);
+  --cms-glass-card: oklch(100% 0 0 / 0.05);
   --cms-glass-tint: oklch(100% 0 0 / 0.05);
-  --cms-glass-border: oklch(100% 0 0 / 0.1);
+  --cms-glass-border: oklch(100% 0 0 / 0.13);
   --cms-glass-line: oklch(100% 0 0 / 0.08);
   --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.06);
-  --cms-glass-shadow: 0 10px 24px -14px oklch(0% 0 0 / 0.55);
+  --cms-glass-shadow: 0 16px 40px -20px oklch(0% 0 0 / 0.6);
 
   --cms-blob-a: oklch(46% 0.13 255 / 0.5);
   --cms-blob-b: oklch(42% 0.12 300 / 0.4);
@@ -372,13 +372,29 @@ body {
     max-width: calc(var(--cms-content-max) + 2 * var(--cms-paper-pad));
     margin: 24px auto 0;
     padding-top: 24px;
-    /* No backdrop-filter on the sheet: the blobs behind it are already soft,
-       and a filter would turn the sheet into the containing block for
-       Payload's fixed-position popups inside forms. */
-    background-color: var(--cms-glass-sheet);
+    /* The frost is painted by the ::before below, not by the sheet itself. */
+    position: relative;
+    isolation: isolate;
+    background-color: transparent;
     border: 1px solid var(--cms-glass-border);
     border-radius: var(--cms-panel-radius);
     box-shadow: var(--cms-glass-shadow);
+  }
+
+  /* A backdrop-filter on the sheet would make it the containing block for
+     Payload's fixed-position popups inside forms, so the fill and the blur sit
+     on a pseudo-element instead: z-index -1 inside the sheet's own stacking
+     context keeps it behind the view's content and in front of the colour
+     field, while the sheet stays a plain positioned box. */
+  .template-default__wrap > :not(.app-header)::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background-color: var(--cms-glass-sheet);
+    -webkit-backdrop-filter: var(--cms-glass-blur);
+    backdrop-filter: var(--cms-glass-blur);
   }
 
   .template-default__wrap > .collection-list {
@@ -393,8 +409,10 @@ body {
     box-shadow: none;
   }
 
-  /* …and the edit form directly beneath it is the rest. */
-  .template-default__wrap > .doc-header + .collection-edit {
+  /* …and whatever view follows it is the rest: the edit form, but also the API
+     inspector and the versions views, which are siblings of .doc-header in the
+     same way. */
+  .template-default__wrap > .doc-header + * {
     margin-top: 0;
     padding-top: 0;
     border-top: 0;
@@ -1676,4 +1694,29 @@ a.nav__link:focus-visible {
 
 .list-selection__button.delete-documents__toggle::before {
   --cms-action-icon: var(--cms-icon-trash);
+}
+
+/* ---- API view ------------------------------------------------------------------ */
+/* Payload renders this view inside a <Gutter right={false}>, so the JSON panel is
+   meant to bleed to the viewport edge. Inside the content sheet that bleed runs
+   under the sheet's rounded corner and its flat grey slab (elevation-50, 100vh
+   tall) covers the glass — so the right gutter is put back and the panel becomes
+   a tinted card that ends with its content. */
+.template-default__wrap > .query-inspector {
+  padding-block-start: var(--base);
+  padding-inline-end: var(--gutter-h);
+}
+
+.query-inspector__results {
+  min-height: 0;
+  background-color: var(--cms-glass-tint);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: var(--style-radius-l);
+}
+
+/* The API URL is one long unbroken string and Payload clips it (overflow:
+   hidden with no nowrap, so the ellipsis never applies); let it wrap instead. */
+.query-inspector__api-url a {
+  overflow: visible;
+  overflow-wrap: anywhere;
 }

@@ -190,6 +190,11 @@
      breadcrumb home and the sidebar Home link, person for Profile. */
   --cms-icon-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 10.5 12 3l9 7.5'/%3E%3Cpath d='M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5'/%3E%3C/svg%3E");
   --cms-icon-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21a8 8 0 0 1 16 0'/%3E%3C/svg%3E");
+  /* …and plus / pencil / trash for the list create, edit and delete actions. */
+  --cms-icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14'/%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
+  --cms-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L18 10a2.83 2.83 0 0 0-4-4L4 16v4Z'/%3E%3Cpath d='m13.5 6.5 4 4'/%3E%3C/svg%3E");
+  --cms-icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16'/%3E%3Cpath d='M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3Cpath d='m6 7 1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E");
+  --cms-icon-upload: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 16V4'/%3E%3Cpath d='m7.5 8.5 4.5-4.5 4.5 4.5'/%3E%3Cpath d='M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3'/%3E%3C/svg%3E");
 
   /* ---- Glass ----------------------------------------------------------------- */
   /* Frosted surfaces over a field of soft colour blobs (--cms-backdrop, pinned
@@ -350,13 +355,22 @@ body {
     --cms-nav-offset: var(--nav-width);
   }
 
+  /* Nav closed: the hamburger is not in the layout flow — it floats over the
+     first base(3) of the content area (.template-default__nav-toggler-wrapper
+     is sticky with height 0 and that width). The header's own gutter is smaller
+     than that here, so the breadcrumb pill would slide under it; start the
+     header content after the hamburger's column instead. */
+  .template-default:not(.template-default--nav-open) .app-header__content {
+    padding-inline-start: max(var(--gutter-h), calc(var(--base) * 3));
+  }
+
   .template-default__wrap > :not(.app-header) {
     --gutter-h: var(--cms-paper-pad);
 
     box-sizing: border-box;
     width: calc(100% - 2 * var(--cms-paper-inset));
     max-width: calc(var(--cms-content-max) + 2 * var(--cms-paper-pad));
-    margin: 8px auto 0;
+    margin: 24px auto 0;
     padding-top: 24px;
     /* No backdrop-filter on the sheet: the blobs behind it are already soft,
        and a filter would turn the sheet into the containing block for
@@ -386,6 +400,14 @@ body {
     border-top: 0;
     border-start-start-radius: 0;
     border-start-end-radius: 0;
+  }
+}
+
+/* Wide screens: drop the 1200px reading cap so the header bar and the sheet run
+   the full width of the wrap, keeping only the --cms-paper-inset side gutter. */
+@media (min-width: 1440px) {
+  .template-default__wrap {
+    --cms-content-max: 100%;
   }
 }
 
@@ -1333,4 +1355,325 @@ a.nav__link:focus-visible {
 .payload-toast-container .payload-toast-item .payload-toast-close-button:focus-visible {
   outline: var(--accessibility-outline);
   outline-offset: var(--accessibility-outline-offset);
+}
+
+/* ---- Pagination -------------------------------------------------------------- */
+/* The list footer row: .paginator (arrows, page buttons, "…" separators), the
+   "1-10 of 42" count, then the per-page popup trigger. The paginator becomes one
+   glass pill holding round page chips; the per-page trigger is a matching chip.
+   Payload's own rules are layered, so these unlayered ones win outright; its
+   per-child margins are replaced by a flex gap. */
+.collection-list__page-controls {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.paginator {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 999px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+}
+
+.paginator .paginator__page,
+.paginator .paginator__separator,
+.paginator .clickable-arrow {
+  margin: 0;
+}
+
+.paginator .paginator__page,
+.paginator .clickable-arrow {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--cms-muted);
+  background: transparent;
+  border-radius: 999px;
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.paginator .paginator__page:hover,
+.paginator .clickable-arrow:not(.clickable-arrow--is-disabled):hover {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+}
+
+.paginator .paginator__page--is-current,
+.paginator .paginator__page--is-current:hover {
+  font-weight: 600;
+  color: var(--cms-on-accent);
+  background: var(--cms-accent);
+  box-shadow: var(--cms-shadow-lift);
+}
+
+.paginator .paginator__separator {
+  min-width: 20px;
+  text-align: center;
+  color: var(--cms-muted);
+}
+
+.paginator .paginator__page:focus-visible,
+.paginator .clickable-arrow:focus-visible {
+  outline: var(--accessibility-outline);
+  outline-offset: -2px;
+}
+
+.collection-list__page-info {
+  font-size: 13px;
+  color: var(--cms-muted);
+}
+
+/* Per-page trigger: same chip as a page button, wide enough for its label. */
+.collection-list__page-controls .per-page__base-button {
+  gap: 4px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cms-muted);
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 999px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.collection-list__page-controls .per-page__base-button:hover {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+}
+
+/* ---- List controls ----------------------------------------------------------- */
+/* The bar above a list table: a search input plus the Columns / Filters / Sort
+   toggles, and the panels those toggles open below it. Payload's flat
+   elevation-50 bar becomes one glass pill, the toggles are chips inside it, and
+   the panels are glass cards. Below Payload's small break ($breakpoint-s-width,
+   768px) the bar unstacks into transparent full-width rows, so the pill shape
+   only applies above it. */
+@media (min-width: 769px) {
+  .list-controls__wrap {
+    padding: 6px 6px 6px 16px;
+    background: var(--cms-glass-card);
+    border: 1px solid var(--cms-glass-line);
+    border-radius: 999px;
+    box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  }
+
+  /* The bar is the field's surface, so the input itself is invisible. */
+  .list-controls .search-filter__input {
+    font-size: 14px;
+    background: transparent;
+  }
+}
+
+/* Columns / Filters / Sort toggles. */
+.list-controls__buttons-wrap .pill {
+  gap: 6px;
+  height: 32px;
+  padding-inline: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cms-muted);
+  background: var(--cms-glass-sheet);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 999px;
+  box-shadow: var(--cms-glass-highlight);
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.list-controls__buttons-wrap .pill--has-action:hover,
+.list-controls__buttons-wrap .pill--has-action:active {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+}
+
+/* Panels the toggles reveal: columns, filters, sort. */
+.list-controls .column-selector,
+.list-controls .where-builder,
+.list-controls .sort-complex {
+  padding: 16px;
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 16px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+}
+
+/* Column chips: off by default, accent-tinted when the column is shown. */
+.column-selector .column-selector__column {
+  height: 30px;
+  padding-inline: 12px;
+  font-size: 13px;
+  color: var(--cms-muted);
+  background: transparent;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--cms-glass-line);
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.column-selector .column-selector__column:hover {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+  box-shadow: inset 0 0 0 1px var(--cms-glass-line);
+}
+
+.column-selector .column-selector__column--active,
+.column-selector .column-selector__column--active:hover {
+  color: var(--cms-accent);
+  background: color-mix(in oklch, var(--cms-accent) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--cms-accent) 35%, transparent);
+}
+
+/* ---- List header actions ------------------------------------------------------ */
+/* "Create new" and "Bulk Upload" sit next to the collection title as Payload
+   pill buttons. Create new is the accent action; Bulk Upload is the quiet glass
+   chip beside it. */
+.list-header__title-actions .btn--style-pill {
+  --bg-color: var(--cms-glass-sheet);
+  --color: var(--cms-muted);
+  --hover-bg: var(--cms-glass-tint);
+  --hover-color: var(--theme-text);
+
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 999px;
+  box-shadow: var(--cms-glass-highlight);
+}
+
+.list-header__title-actions .list-create-new-doc__create-new-button {
+  --bg-color: var(--cms-accent);
+  --color: var(--cms-on-accent);
+  --hover-bg: var(--cms-accent-hover);
+  --hover-color: var(--cms-on-accent);
+
+  border-color: transparent;
+  box-shadow: var(--cms-shadow-lift);
+}
+
+/* ---- Bulk selection actions ---------------------------------------------------- */
+/* Appears once a row checkbox is ticked: "N selected — Select all — Edit Delete".
+   Payload renders the count and underlined text buttons separated by literal
+   "—" spans (every span after the count is a separator). The whole thing
+   becomes one glass pill of chips, so the separators are dropped and Delete
+   takes the error tone. */
+.list-selection {
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px 4px 14px;
+  font-size: 13px;
+  color: var(--cms-muted);
+  background: var(--cms-glass-card);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: 999px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+}
+
+.list-selection > span ~ span {
+  display: none;
+}
+
+.list-selection__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding-inline: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cms-muted);
+  text-decoration: none;
+  background: transparent;
+  border-radius: 999px;
+  transition:
+    background-color var(--cms-dur) var(--cms-ease),
+    color var(--cms-dur) var(--cms-ease);
+}
+
+.list-selection__button:hover,
+.list-selection__button:focus-visible {
+  color: var(--theme-text);
+  background: var(--cms-glass-tint);
+}
+
+.list-selection__button:focus-visible {
+  outline: var(--accessibility-outline);
+  outline-offset: -2px;
+}
+
+.list-selection__button.delete-documents__toggle {
+  color: var(--theme-error-600);
+}
+
+.list-selection__button.delete-documents__toggle:hover,
+.list-selection__button.delete-documents__toggle:focus-visible {
+  color: var(--theme-error-700);
+  background: color-mix(in oklch, var(--theme-error-500) 12%, transparent);
+}
+
+/* Small screens: the selection bar is fixed to the bottom of the viewport —
+   float it as a glass bar instead of a flat block on the page background. */
+.collection-list__list-selection {
+  padding: 10px 16px;
+  background: var(--cms-glass-chrome);
+  border-top: 1px solid var(--cms-glass-border);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
+}
+
+/* ---- Action icons -------------------------------------------------------------- */
+/* Create new, Edit and Delete are label-only buttons in Payload, so each leads
+   with a 14px line glyph drawn as a mask in currentColor — same technique as the
+   sidebar icons. The Edit button carries no class of its own; its wrapper
+   (.edit-many) identifies it, and Publish/Unpublish beside it stay label-only. */
+.list-create-new-doc__create-new-button .btn__content::before,
+.list-header__title-actions .btn--style-pill:not(.list-create-new-doc__create-new-button, .create-new-doc-in-folder__button, .create-new-doc-in-folder__popup-button) .btn__content::before,
+.list-selection .edit-many > .list-selection__button::before,
+.list-selection__button.delete-documents__toggle::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-inline-end: 6px;
+  background-color: currentColor;
+  -webkit-mask: var(--cms-action-icon) center / contain no-repeat;
+  mask: var(--cms-action-icon) center / contain no-repeat;
+}
+
+.list-create-new-doc__create-new-button .btn__content::before {
+  --cms-action-icon: var(--cms-icon-plus);
+}
+
+/* Bulk Upload is the one pill in that row Payload gives no class of its own, so
+   it is addressed as "not either create button". */
+.list-header__title-actions .btn--style-pill:not(.list-create-new-doc__create-new-button, .create-new-doc-in-folder__button, .create-new-doc-in-folder__popup-button) .btn__content::before {
+  --cms-action-icon: var(--cms-icon-upload);
+}
+
+/* The chips already space their contents with a gap. */
+.list-selection .edit-many > .list-selection__button::before,
+.list-selection__button.delete-documents__toggle::before {
+  margin-inline-end: 0;
+}
+
+.list-selection .edit-many > .list-selection__button::before {
+  --cms-action-icon: var(--cms-icon-pencil);
+}
+
+.list-selection__button.delete-documents__toggle::before {
+  --cms-action-icon: var(--cms-icon-trash);
 }

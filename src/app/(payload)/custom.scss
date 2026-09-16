@@ -229,7 +229,6 @@
   --cms-glass-tint: oklch(25% 0.02 255 / 0.04);
   --cms-glass-border: oklch(100% 0 0 / 0.75);
   --cms-glass-line: oklch(25% 0.02 255 / 0.1);
-  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.7);
   --cms-glass-shadow: 0 16px 40px -20px oklch(30% 0.05 255 / 0.35);
   --cms-glass-blur: blur(32px) saturate(165%);
   --cms-glass-row-hover: color-mix(in oklch, var(--theme-success-100) 45%, transparent);
@@ -268,7 +267,6 @@ html[data-theme='dark'] {
   --cms-glass-tint: oklch(100% 0 0 / 0.05);
   --cms-glass-border: oklch(100% 0 0 / 0.13);
   --cms-glass-line: oklch(100% 0 0 / 0.08);
-  --cms-glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.06);
   --cms-glass-shadow: 0 16px 40px -20px oklch(0% 0 0 / 0.6);
 
   --cms-blob-a: oklch(46% 0.13 255 / 0.5);
@@ -846,7 +844,7 @@ body {
 .card {
   background: var(--cms-glass-card);
   border-color: var(--cms-glass-line);
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
   transition:
     border-color var(--cms-dur) var(--cms-ease),
     box-shadow var(--cms-dur) var(--cms-ease);
@@ -855,7 +853,7 @@ body {
 .card--has-onclick:hover {
   background: var(--cms-glass-card);
   border-color: var(--theme-elevation-250);
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-md);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-md);
 }
 
 /* Dashboard items lift 2px on hover (and on keyboard focus), then settle back
@@ -1208,7 +1206,7 @@ a.nav__link:is(:hover, :focus-visible):not(.active, :has(.nav__link-indicator)) 
     background: var(--cms-glass-sheet);
     border: 1px solid var(--cms-glass-border);
     border-radius: var(--style-radius-l);
-    box-shadow: var(--cms-glass-highlight), var(--cms-glass-shadow);
+    box-shadow: var(--cms-glass-rim), var(--cms-glass-shadow);
     -webkit-backdrop-filter: var(--cms-glass-blur);
     backdrop-filter: var(--cms-glass-blur);
   }
@@ -1404,7 +1402,6 @@ a.nav__link:is(:hover, :focus-visible):not(.active, :has(.nav__link-indicator)) 
    bare text on a translucent wash. Actions align right, and the card eases in
    on open (skipped for reduced motion). */
 .confirmation-modal {
-  --cms-dialog-overlay: oklch(15% 0.01 255 / 0.35);
   --cms-dialog-fill: oklch(100% 0 0 / 0.62);
   --cms-dialog-sheen: linear-gradient(
     140deg,
@@ -1413,9 +1410,6 @@ a.nav__link:is(:hover, :focus-visible):not(.active, :has(.nav__link-indicator)) 
     transparent 70%
   );
   --cms-dialog-blur: blur(44px) saturate(180%);
-  --cms-dialog-rim:
-    inset 0 1px 0 oklch(100% 0 0 / 0.8),
-    inset 0 -1px 0 oklch(100% 0 0 / 0.25);
   --cms-dialog-shadow:
     0 24px 48px -16px oklch(20% 0.01 255 / 0.3),
     0 2px 6px -2px oklch(20% 0.01 255 / 0.12);
@@ -1431,9 +1425,6 @@ html[data-theme='dark'] .confirmation-modal {
     oklch(100% 0 0 / 0.03) 45%,
     transparent 70%
   );
-  --cms-dialog-rim:
-    inset 0 1px 0 oklch(100% 0 0 / 0.14),
-    inset 0 -1px 0 oklch(100% 0 0 / 0.05);
   --cms-dialog-shadow:
     0 24px 48px -16px oklch(0% 0 0 / 0.55),
     0 2px 6px -2px oklch(0% 0 0 / 0.35);
@@ -1455,7 +1446,7 @@ html[data-theme='dark'] .confirmation-modal {
    is the blur. Less dim, more blur than before: the page should read as colour
    behind the glass, not as content. */
 .confirmation-modal::before {
-  background: var(--cms-dialog-overlay);
+  background: oklch(15% 0.01 255 / 0.35);
   opacity: 1;
 }
 
@@ -1466,8 +1457,7 @@ html[data-theme='dark'] .confirmation-modal {
 
 /* The card itself: a thinner fill than the content sheet so the colour behind it
    comes through, a deep blur so what comes through is colour and not text, a
-   diagonal sheen falling off toward the bottom-right, and a rim lit along the
-   top edge with a fainter return along the bottom. */
+   diagonal sheen falling off toward the bottom-right, and the shared rim. */
 .confirmation-modal__wrapper {
   box-sizing: border-box;
   width: min(440px, 100%);
@@ -1477,7 +1467,7 @@ html[data-theme='dark'] .confirmation-modal {
   background-image: var(--cms-dialog-sheen);
   border: 1px solid var(--cms-glass-border);
   border-radius: 20px;
-  box-shadow: var(--cms-dialog-rim), var(--cms-dialog-shadow);
+  box-shadow: var(--cms-glass-rim), var(--cms-dialog-shadow);
   -webkit-backdrop-filter: var(--cms-dialog-blur);
   backdrop-filter: var(--cms-dialog-blur);
   animation: cms-dialog-in 180ms var(--cms-ease) both;
@@ -1532,9 +1522,7 @@ html[data-theme='dark'] .confirmation-modal {
    dropzone inside both — plus the bulk upload drawer, which reuses the same
    dropzone. Payload draws them as flat elevation slabs with a dotted hairline;
    here they join the dashboard card family — tinted glass, the glass hairline,
-   the larger corner — and the drag state picks up the accent.
-   .dropzoneStyle--none is left alone: callers pass it to opt out of the frame
-   entirely (it is `all: unset`), and these unlayered rules would put it back. */
+   the larger corner — and the drag state picks up the accent. */
 .file-field {
   background: var(--cms-glass-tint);
   border: 1px solid var(--cms-glass-line);
@@ -1551,40 +1539,27 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-card);
   border-color: var(--cms-glass-line);
   border-radius: var(--style-radius-l);
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
-}
-
-.upload-relationship-details__thumbnail {
-  border-radius: var(--style-radius-m);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
 }
 
 .upload-relationship-details__meta {
   color: var(--cms-muted);
 }
 
-.upload .shimmer-effect {
-  border-color: var(--cms-glass-line);
-  border-radius: var(--style-radius-l);
-}
-
 /* Dashed rather than dotted, on the same hairline weight as the rest of the
    theme, and it answers the pointer before you drop anything on it. */
-.dropzone:not(.dropzoneStyle--none) {
+.dropzone {
   border: 1px dashed var(--theme-elevation-200);
   border-radius: var(--style-radius-l);
-  transition:
-    border-color var(--cms-dur) var(--cms-ease),
-    background-color var(--cms-dur) var(--cms-ease),
-    box-shadow var(--cms-dur) var(--cms-ease);
 }
 
-.dropzone:not(.dropzoneStyle--none):hover {
+.dropzone:hover {
   border-color: var(--theme-elevation-300);
 }
 
 /* Dragging: Payload fills with the success ramp's pale wash. The accent says the
    same thing in this theme's voice, and the line goes solid to read as armed. */
-.dropzone:not(.dropzoneStyle--none).dragging {
+.dropzone.dragging {
   border-style: solid;
   border-color: var(--cms-accent);
   background: color-mix(in oklch, var(--cms-accent) 8%, transparent);
@@ -1694,12 +1669,8 @@ html[data-theme='dark'] .confirmation-modal {
      Nothing inside a drawer is position: fixed, so making it a containing block
      costs nothing (Payload's popups are absolute).
    - Payload's own open/close timing is left alone. */
-.drawer {
-  --cms-drawer-scrim: oklch(15% 0.01 255 / 0.4);
-}
-
 .drawer__blur-bg::before {
-  background: var(--cms-drawer-scrim);
+  background: oklch(15% 0.01 255 / 0.4);
   opacity: 1;
 }
 
@@ -1714,7 +1685,7 @@ html[data-theme='dark'] .confirmation-modal {
   border-inline-start: 1px solid var(--cms-glass-border);
   border-start-start-radius: 20px;
   border-end-start-radius: 20px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-glass-shadow);
+  box-shadow: var(--cms-glass-rim), var(--cms-glass-shadow);
 }
 
 /* Titles in the display face, and every drawer rule (header underline, the
@@ -1851,7 +1822,7 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-card);
   border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
 }
 
 .paginator .paginator__page,
@@ -1920,7 +1891,7 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-card);
   border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
   transition:
     background-color var(--cms-dur) var(--cms-ease),
     color var(--cms-dur) var(--cms-ease);
@@ -1944,7 +1915,7 @@ html[data-theme='dark'] .confirmation-modal {
     background: var(--cms-glass-card);
     border: 1px solid var(--cms-glass-line);
     border-radius: 999px;
-    box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+    box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
   }
 
   /* The bar is the field's surface, so the input itself is invisible. */
@@ -1965,7 +1936,7 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-sheet);
   border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-glass-highlight);
+  box-shadow: var(--cms-glass-rim);
   transition:
     background-color var(--cms-dur) var(--cms-ease),
     color var(--cms-dur) var(--cms-ease);
@@ -1985,7 +1956,7 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-card);
   border: 1px solid var(--cms-glass-line);
   border-radius: 16px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
 }
 
 /* Column chips: off by default, accent-tinted when the column is shown. */
@@ -2057,7 +2028,7 @@ html[data-theme='dark'] .confirmation-modal {
   background: var(--cms-glass-card);
   border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
 }
 
 .list-selection > span ~ span {

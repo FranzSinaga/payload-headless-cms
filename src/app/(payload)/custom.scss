@@ -194,6 +194,7 @@
   --cms-icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14'/%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
   --cms-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L18 10a2.83 2.83 0 0 0-4-4L4 16v4Z'/%3E%3Cpath d='m13.5 6.5 4 4'/%3E%3C/svg%3E");
   --cms-icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16'/%3E%3Cpath d='M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3Cpath d='m6 7 1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E");
+  --cms-icon-compass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m15.6 8.4-2.2 5-5 2.2 2.2-5 5-2.2Z'/%3E%3C/svg%3E");
   --cms-icon-upload: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 16V4'/%3E%3Cpath d='m7.5 8.5 4.5-4.5 4.5 4.5'/%3E%3Cpath d='M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3'/%3E%3C/svg%3E");
 
   /* ---- Glass ----------------------------------------------------------------- */
@@ -2124,6 +2125,44 @@ html[data-theme='dark'] .confirmation-modal {
 
 .list-selection__button.delete-documents__toggle::before {
   --cms-action-icon: var(--cms-icon-trash);
+}
+
+/* ---- Not found ----------------------------------------------------------------- */
+/* Payload's 404 is a short left-aligned card at the top of the view. It gets the
+   whole sheet instead: the content centred in a box tall enough to fill what is
+   left of the viewport under the app header, with a compass above it — masked in
+   currentColor's place by the accent, the same technique as the nav and action
+   icons. The subtraction is deliberately generous (the desktop sheet costs 56px
+   in margin and wrap padding): a few pixels short reads as full height, a few
+   over adds a scrollbar. */
+.not-found {
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - var(--app-header-height) - 80px);
+  margin-top: 0;
+  text-align: center;
+}
+
+.not-found__wrap {
+  align-items: center;
+  gap: 16px;
+  max-width: 420px;
+}
+
+/* First flex item in the wrap, so the wrap's own gap spaces it off the heading.
+   A definite width keeps align-items: stretch from pulling it wide. */
+.not-found__wrap::before {
+  content: '';
+  width: 80px;
+  height: 80px;
+  background-color: var(--cms-accent);
+  opacity: 0.35;
+  -webkit-mask: var(--cms-icon-compass) center / contain no-repeat;
+  mask: var(--cms-icon-compass) center / contain no-repeat;
+}
+
+.not-found__content {
+  gap: 8px;
 }
 
 /* ---- API view ------------------------------------------------------------------ */

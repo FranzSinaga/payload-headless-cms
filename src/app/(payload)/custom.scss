@@ -209,6 +209,15 @@
      - nav-active: the current sidebar link — a brighter pane on the glass rail. */
   --cms-glass-chrome: oklch(99.5% 0.002 255 / 0.6);
   --cms-nav-active: oklch(100% 0 0 / 0.72);
+  --cms-glass-sheen: linear-gradient(
+    135deg,
+    oklch(100% 0 0 / 0.6),
+    oklch(100% 0 0 / 0.15) 55%,
+    transparent
+  );
+  --cms-glass-rim:
+    inset 0 1px 0 oklch(100% 0 0 / 0.9),
+    inset 0 -1px 0 oklch(25% 0.02 255 / 0.07);
   --cms-glass-sheet: oklch(99.5% 0.002 255 / 0.78);
   --cms-glass-card: oklch(100% 0 0 / 0.55);
   --cms-glass-tint: oklch(25% 0.02 255 / 0.04);
@@ -233,6 +242,15 @@
 html[data-theme='dark'] {
   --cms-glass-chrome: oklch(21% 0.012 255 / 0.62);
   --cms-nav-active: oklch(100% 0 0 / 0.09);
+  --cms-glass-sheen: linear-gradient(
+    135deg,
+    oklch(100% 0 0 / 0.1),
+    oklch(100% 0 0 / 0.025) 55%,
+    transparent
+  );
+  --cms-glass-rim:
+    inset 0 1px 0 oklch(100% 0 0 / 0.11),
+    inset 0 -1px 0 oklch(0% 0 0 / 0.22);
   --cms-glass-sheet: oklch(19% 0.012 255 / 0.8);
   --cms-glass-card: oklch(100% 0 0 / 0.05);
   --cms-glass-tint: oklch(100% 0 0 / 0.05);
@@ -253,6 +271,8 @@ html[data-theme='dark'] {
   html[data-theme='dark'] {
     --cms-glass-chrome: var(--theme-elevation-0);
     --cms-nav-active: var(--theme-elevation-150);
+    --cms-glass-sheen: none;
+    --cms-glass-rim: inset 0 0 0 0 transparent;
     --cms-glass-sheet: var(--theme-elevation-0);
     --cms-glass-card: var(--theme-elevation-0);
     --cms-glass-tint: var(--theme-elevation-50);
@@ -478,16 +498,21 @@ body {
    .step-nav__last. Separators are therefore always the even children — their
    "/" is hidden and a thin chevron drawn instead. The Payload logo in the home
    item becomes a house glyph, masked and tinted by currentColor. Links are soft
-   pills; focus rings sit inside them because the header clips overflow. */
+   pills; focus rings sit inside them because the header clips overflow.
+   The trail's own pill is glass in its own right: it refracts what is behind the
+   header bar rather than only sitting on it, with the shared sheen and rim. */
 .step-nav {
   gap: 2px;
   width: max-content;
   padding: 5px 8px;
   font-size: 14px;
-  background: var(--cms-glass-card);
+  background-color: var(--cms-glass-card);
+  background-image: var(--cms-glass-sheen);
   border: 1px solid var(--cms-glass-line);
   border-radius: 999px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
 }
 
 /* The whole trail sits in one pill, so Payload's right-edge fade would cut
@@ -517,7 +542,7 @@ body {
 .step-nav a:focus-visible {
   text-decoration: none;
   color: var(--theme-text);
-  background: var(--theme-elevation-100);
+  background: var(--cms-glass-tint);
 }
 
 .step-nav a:focus-visible {
@@ -928,19 +953,29 @@ body {
   transition: background var(--cms-dur) var(--cms-ease);
 }
 
+/* Hover is excluded on the current link: its selector is heavier than the active
+   pane's, so a plain `background` there would drop the sheen and the fill on
+   hover — and the page you are already on needs no hover feedback. */
 a.nav__link:hover,
 a.nav__link:focus-visible {
   text-decoration: none;
+}
+
+a.nav__link:is(:hover, :focus-visible):not(.active, :has(.nav__link-indicator)) {
   background: var(--cms-nav-hover);
 }
 
-/* Current link: a frosted pane — brighter fill, a hairline edge drawn inset
-   (the group's AnimateHeight wrapper clips anything outside) and the glass
-   top highlight. */
+/* Current link: a frosted pane lit from the top-left. Everything is drawn inside
+   the box — the group's AnimateHeight wrapper clips anything outside, so the
+   depth comes from an inset rim (bright top edge, shaded bottom, hairline all
+   round) and a diagonal sheen over the fill rather than a drop shadow. A
+   backdrop-filter here would buy nothing: the nav is already a blurred surface,
+   so a nested blur would only sample the nav's own flat fill. */
 .nav__link.active,
 .nav__link:has(.nav__link-indicator) {
-  background: var(--cms-nav-active);
-  box-shadow: var(--cms-glass-highlight), inset 0 0 0 1px var(--cms-glass-line);
+  background-color: var(--cms-nav-active);
+  background-image: var(--cms-glass-sheen);
+  box-shadow: var(--cms-glass-rim), inset 0 0 0 1px var(--cms-glass-line);
   font-weight: 500;
 }
 
@@ -1237,36 +1272,137 @@ a.nav__link:focus-visible {
   }
 }
 
+/* Login button, in flight. Payload's FormSubmit only disables the button while
+   the request is running — this form passes no `disabled` and no `initializing`,
+   so on the login screen `btn--disabled` *is* the loading state. A ring spins in
+   front of the label, which stays put so the button doesn't change width. The
+   fill is left alone: the primary button keeps its accent in the disabled state
+   (this file's unlayered --bg-color outranks Payload's layered disabled one), so
+   it reads as busy rather than dead. */
+.login__form .form-submit .btn--disabled .btn__content {
+  gap: 8px;
+}
+
+.login__form .form-submit .btn--disabled .btn__content::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid color-mix(in oklch, currentColor 30%, transparent);
+  border-block-start-color: currentColor;
+  border-radius: 50%;
+  animation: cms-spin 700ms linear infinite;
+}
+
+@keyframes cms-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Reduced motion: a pulse instead of a spin — still says "working", no rotation. */
+@media (prefers-reduced-motion: reduce) {
+  .login__form .form-submit .btn--disabled .btn__content::before {
+    animation: cms-pulse 1.2s var(--cms-ease) infinite;
+  }
+
+  @keyframes cms-pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+}
+
 /* ---- Confirmation modals ------------------------------------------------------- */
 /* Leave without saving — and Payload's other confirm dialogs, which share
    ConfirmationModal — as a centred card over a dimmed, blurred page instead of
    bare text on a translucent wash. Actions align right, and the card eases in
    on open (skipped for reduced motion). */
 .confirmation-modal {
-  --cms-dialog-overlay: oklch(15% 0.01 255 / 0.4);
-  --cms-dialog-shadow: 0 24px 48px -16px oklch(20% 0.01 255 / 0.28);
+  --cms-dialog-overlay: oklch(15% 0.01 255 / 0.35);
+  --cms-dialog-fill: oklch(100% 0 0 / 0.62);
+  --cms-dialog-sheen: linear-gradient(
+    140deg,
+    oklch(100% 0 0 / 0.55),
+    oklch(100% 0 0 / 0.1) 42%,
+    transparent 70%
+  );
+  --cms-dialog-blur: blur(44px) saturate(180%);
+  --cms-dialog-rim:
+    inset 0 1px 0 oklch(100% 0 0 / 0.8),
+    inset 0 -1px 0 oklch(100% 0 0 / 0.25);
+  --cms-dialog-shadow:
+    0 24px 48px -16px oklch(20% 0.01 255 / 0.3),
+    0 2px 6px -2px oklch(20% 0.01 255 / 0.12);
 
   padding: 16px;
 }
 
+html[data-theme='dark'] .confirmation-modal {
+  --cms-dialog-fill: oklch(24% 0.012 255 / 0.55);
+  --cms-dialog-sheen: linear-gradient(
+    140deg,
+    oklch(100% 0 0 / 0.12),
+    oklch(100% 0 0 / 0.03) 45%,
+    transparent 70%
+  );
+  --cms-dialog-rim:
+    inset 0 1px 0 oklch(100% 0 0 / 0.14),
+    inset 0 -1px 0 oklch(100% 0 0 / 0.05);
+  --cms-dialog-shadow:
+    0 24px 48px -16px oklch(0% 0 0 / 0.55),
+    0 2px 6px -2px oklch(0% 0 0 / 0.35);
+}
+
+/* The glass tokens on :root go solid under reduced transparency; the dialog's
+   own tokens have to follow, since they are set on .confirmation-modal and
+   would otherwise win. */
+@media (prefers-reduced-transparency: reduce) {
+  .confirmation-modal,
+  html[data-theme='dark'] .confirmation-modal {
+    --cms-dialog-fill: var(--theme-elevation-0);
+    --cms-dialog-sheen: none;
+    --cms-dialog-blur: none;
+  }
+}
+
+/* Payload's blur-bg mixin splits the scrim in two — ::before is the dim, ::after
+   is the blur. Less dim, more blur than before: the page should read as colour
+   behind the glass, not as content. */
 .confirmation-modal::before {
   background: var(--cms-dialog-overlay);
   opacity: 1;
-  backdrop-filter: blur(6px);
 }
 
+.confirmation-modal::after {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* The card itself: a thinner fill than the content sheet so the colour behind it
+   comes through, a deep blur so what comes through is colour and not text, a
+   diagonal sheen falling off toward the bottom-right, and a rim lit along the
+   top edge with a fainter return along the bottom. */
 .confirmation-modal__wrapper {
   box-sizing: border-box;
   width: min(440px, 100%);
   gap: 20px;
   padding: 28px;
-  background: var(--cms-glass-sheet);
+  background-color: var(--cms-dialog-fill);
+  background-image: var(--cms-dialog-sheen);
   border: 1px solid var(--cms-glass-border);
   border-radius: 20px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-dialog-shadow);
-  -webkit-backdrop-filter: var(--cms-glass-blur);
-  backdrop-filter: var(--cms-glass-blur);
+  box-shadow: var(--cms-dialog-rim), var(--cms-dialog-shadow);
+  -webkit-backdrop-filter: var(--cms-dialog-blur);
+  backdrop-filter: var(--cms-dialog-blur);
   animation: cms-dialog-in 180ms var(--cms-ease) both;
+}
+
+/* Cancel sits on the glass, so it drops its opaque fill and keeps only the ring —
+   a solid button here is the one thing that breaks the illusion. */
+.confirmation-modal__controls .btn--style-secondary {
+  --bg-color: transparent;
+  --hover-bg: var(--cms-glass-tint);
 }
 
 .confirmation-modal__content {
@@ -1312,12 +1448,174 @@ a.nav__link:focus-visible {
   }
 }
 
+/* ---- Upload fields ------------------------------------------------------------- */
+/* Three surfaces share this: the file area on an upload collection (.file-field),
+   the cards an upload relationship field lists (.upload-field-card), and the
+   dropzone inside both — plus the bulk upload drawer, which reuses the same
+   dropzone. Payload draws them as flat elevation slabs with a dotted hairline;
+   here they join the dashboard card family — tinted glass, the glass hairline,
+   the larger corner — and the drag state picks up the accent.
+   .dropzoneStyle--none is left alone: callers pass it to opt out of the frame
+   entirely (it is `all: unset`), and these unlayered rules would put it back. */
+.file-field {
+  background: var(--cms-glass-tint);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: var(--style-radius-l);
+}
+
+/* The thumbnail is flush with the slab's leading edge, so its corners follow,
+   inset by the slab's own border. */
+.file-field__thumbnail-wrap .thumbnail {
+  border-radius: calc(var(--style-radius-l) - 1px) 0 0 calc(var(--style-radius-l) - 1px);
+}
+
+.upload-field-card {
+  background: var(--cms-glass-card);
+  border-color: var(--cms-glass-line);
+  border-radius: var(--style-radius-l);
+  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-sm);
+}
+
+.upload-relationship-details__thumbnail {
+  border-radius: var(--style-radius-m);
+}
+
+.upload-relationship-details__meta {
+  color: var(--cms-muted);
+}
+
+.upload .shimmer-effect {
+  border-color: var(--cms-glass-line);
+  border-radius: var(--style-radius-l);
+}
+
+/* Dashed rather than dotted, on the same hairline weight as the rest of the
+   theme, and it answers the pointer before you drop anything on it. */
+.dropzone:not(.dropzoneStyle--none) {
+  border: 1px dashed var(--theme-elevation-200);
+  border-radius: var(--style-radius-l);
+  transition:
+    border-color var(--cms-dur) var(--cms-ease),
+    background-color var(--cms-dur) var(--cms-ease),
+    box-shadow var(--cms-dur) var(--cms-ease);
+}
+
+.dropzone:not(.dropzoneStyle--none):hover {
+  border-color: var(--theme-elevation-300);
+}
+
+/* Dragging: Payload fills with the success ramp's pale wash. The accent says the
+   same thing in this theme's voice, and the line goes solid to read as armed. */
+.dropzone:not(.dropzoneStyle--none).dragging {
+  border-style: solid;
+  border-color: var(--cms-accent);
+  background: color-mix(in oklch, var(--cms-accent) 8%, transparent);
+  box-shadow: var(--cms-shadow-lift);
+}
+
+/* "or", "drag and drop a file": the theme's mono label voice, keeping Payload's
+   lowercase — the phrases are too long to shout in caps. */
+.file-field__orText,
+.file-field__dragAndDropText,
+.upload__dropzoneContent__orText,
+.upload__dragAndDropText {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--cms-muted);
+}
+
+/* ---- Drawers ------------------------------------------------------------------- */
+/* The right-hand sheet (relationship edit, bulk upload, blocks picker, folder
+   move) as the same frosted panel as the content sheet: dimmed blurred page
+   behind it, glass fill, a lit left edge and rounded left corners.
+   - Payload's blur-bg mixin paints a 75% --theme-bg wash in its ::before and the
+     blur in its ::after; only the wash is retuned to the dialog scrim.
+   - Fill and blur sit on .drawer__content itself. Payload leaves an empty
+     .drawer__blur-bg-content div inside it, but painting there needs a
+     z-index: -1 layer kept trapped in the content's stacking context; the glass
+     belongs on the element that already carries the corners and the border.
+     Nothing inside a drawer is position: fixed, so making it a containing block
+     costs nothing (Payload's popups are absolute).
+   - Payload's own open/close timing is left alone. */
+.drawer {
+  --cms-drawer-scrim: oklch(15% 0.01 255 / 0.4);
+}
+
+.drawer__blur-bg::before {
+  background: var(--cms-drawer-scrim);
+  opacity: 1;
+}
+
+.drawer__blur-bg::after {
+  backdrop-filter: blur(6px);
+}
+
+.drawer__content {
+  background-color: var(--cms-glass-sheet);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
+  border-inline-start: 1px solid var(--cms-glass-border);
+  border-start-start-radius: 20px;
+  border-end-start-radius: 20px;
+  box-shadow: var(--cms-glass-highlight), var(--cms-glass-shadow);
+}
+
+/* Titles in the display face, and every drawer rule (header underline, the
+   doc drawer's divider) on the glass hairline instead of a flat elevation. */
+.drawer__header__title,
+.doc-drawer__header-text,
+.drawer-action-header__title,
+.bulk-upload--drawer-header h2 {
+  font-family: var(--cms-font-display);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.doc-drawer__header,
+.drawer-action-header,
+.bulk-upload--drawer-header {
+  border-bottom-color: var(--cms-glass-line);
+}
+
+.doc-drawer__divider {
+  background: var(--cms-glass-line);
+}
+
+/* Close buttons: Payload centres an oversized X in a small overflow-hidden box,
+   so the box just gets a round clip and a quiet hover chip — no resizing, which
+   would knock the icon's negative margin off centre. */
+.drawer__header__close,
+.doc-drawer__header-close {
+  border-radius: 999px;
+  color: var(--cms-muted);
+  transition:
+    color var(--cms-dur) var(--cms-ease),
+    background-color var(--cms-dur) var(--cms-ease);
+}
+
+.drawer__header__close:hover,
+.drawer__header__close:focus-visible,
+.doc-drawer__header-close:hover,
+.doc-drawer__header-close:focus-visible {
+  color: var(--theme-text);
+  background-color: var(--cms-glass-tint);
+}
+
 /* ---- Toasts -------------------------------------------------------------------- */
-/* Payload's Sonner toasts as frosted glass cards, like the dialogs: sheet-weight
-   glass with blur, rounder corners and the glass top highlight. Instead of
-   Payload's solid pastel fill, each type is a faint wash of its colour over the
-   glass plus a tinted edge; text stays in the theme text colour. Payload's icons
-   already paint from the success/error/warning ramps, so they are left alone. */
+/* Payload's Sonner toasts as frosted glass cards, like the dialogs: blurred glass
+   under the shared sheen and rim, rounder corners. Instead of Payload's solid
+   pastel fill, each type is a faint wash of its colour over the glass plus a
+   tinted edge; text stays in the theme text colour. Payload's icons already paint
+   from the success/error/warning ramps, so they are left alone.
+   The fill stays at sheet weight rather than thinning out like the dialog's: a
+   toast lands over whatever is on screen and has to be readable in the second it
+   is there, so the glass comes from the sheen and the rim, not from transparency.
+   The sheen is the top background layer; `none` is a valid layer under reduced
+   transparency, which is why this one can compose it and box-shadow cannot. */
 .payload-toast-container .payload-toast-item {
   --cms-toast-tone: var(--theme-elevation-600);
   --cms-toast-tint: color-mix(in oklch, var(--cms-toast-tone) 10%, transparent);
@@ -1328,10 +1626,13 @@ a.nav__link:focus-visible {
   font-weight: 500;
   line-height: 20px;
   color: var(--theme-text);
-  background: linear-gradient(var(--cms-toast-tint), var(--cms-toast-tint)), var(--cms-glass-sheet);
+  background:
+    var(--cms-glass-sheen),
+    linear-gradient(var(--cms-toast-tint), var(--cms-toast-tint)),
+    var(--cms-glass-sheet);
   border: 1px solid color-mix(in oklch, var(--cms-toast-tone) 30%, var(--cms-glass-border));
   border-radius: 12px;
-  box-shadow: var(--cms-glass-highlight), var(--cms-shadow-md), var(--cms-glass-shadow);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-md), var(--cms-glass-shadow);
   -webkit-backdrop-filter: var(--cms-glass-blur);
   backdrop-filter: var(--cms-glass-blur);
 }

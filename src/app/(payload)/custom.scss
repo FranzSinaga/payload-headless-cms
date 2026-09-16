@@ -25,8 +25,6 @@
   --cms-muted: var(--theme-elevation-600);
   --cms-sidebar-bg: var(--theme-elevation-50);
   --cms-nav-hover: var(--theme-elevation-100);
-  --cms-row-divider: var(--theme-elevation-100);
-  --cms-row-hover: var(--theme-elevation-50);
 
   --cms-shadow-sm: 0 1px 2px oklch(20% 0.01 255 / 0.06);
   --cms-shadow-md: 0 2px 6px oklch(20% 0.01 255 / 0.08);
@@ -194,6 +192,7 @@
   --cms-icon-plus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5v14'/%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E");
   --cms-icon-pencil: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h4L18 10a2.83 2.83 0 0 0-4-4L4 16v4Z'/%3E%3Cpath d='m13.5 6.5 4 4'/%3E%3C/svg%3E");
   --cms-icon-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h16'/%3E%3Cpath d='M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2'/%3E%3Cpath d='m6 7 1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E");
+  --cms-icon-clock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 7v5l3.5 2'/%3E%3C/svg%3E");
   --cms-icon-compass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m15.6 8.4-2.2 5-5 2.2 2.2-5 5-2.2Z'/%3E%3C/svg%3E");
   --cms-icon-upload: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 16V4'/%3E%3Cpath d='m7.5 8.5 4.5-4.5 4.5 4.5'/%3E%3Cpath d='M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3'/%3E%3C/svg%3E");
 
@@ -516,6 +515,10 @@ body {
 .app-header__account {
   display: grid;
   place-items: center;
+  /* A flex item in the header row, so its 32px width is only a basis: add
+     anything to the row (the clock) and the default flex-shrink squashes the
+     circle into an oval while the height holds. */
+  flex: none;
   width: 32px;
   height: 32px;
   border-radius: 999px;
@@ -553,6 +556,34 @@ body {
 .app-header__account:hover .graphic-account__head,
 .app-header__account:hover .graphic-account__body {
   fill: var(--theme-text);
+}
+
+/* ---- Header clock -------------------------------------------------------------- */
+/* src/components/HeaderClock, registered as admin.components.actions — Payload
+   renders those into .app-header__actions, which sits immediately left of the
+   account link. The mono label voice, so it reads as chrome rather than content,
+   tabular figures so the minute flip does not shift the digits, and a clock
+   glyph masked in currentColor like the nav and action icons. */
+.header-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--cms-muted);
+  white-space: nowrap;
+}
+
+.header-clock::before {
+  content: '';
+  flex: none;
+  width: 14px;
+  height: 14px;
+  background-color: currentColor;
+  -webkit-mask: var(--cms-icon-clock) center / contain no-repeat;
+  mask: var(--cms-icon-clock) center / contain no-repeat;
 }
 
 /* ---- Breadcrumbs ------------------------------------------------------------ */
@@ -767,7 +798,7 @@ body {
 .table thead th {
   white-space: nowrap;
   vertical-align: middle;
-  border-bottom: 1px solid var(--theme-border-color);
+  border-bottom: 1px solid var(--cms-glass-line);
 }
 
 .table tbody tr:nth-child(odd) {
@@ -776,7 +807,7 @@ body {
 
 .table tbody td {
   vertical-align: middle;
-  border-bottom: 1px solid var(--cms-row-divider);
+  border-bottom: 1px solid var(--cms-glass-line);
 }
 
 .table tbody tr:last-child td {
@@ -788,21 +819,27 @@ body {
 }
 
 .table tbody tr:hover {
-  background: var(--cms-row-hover);
+  background: var(--cms-glass-tint);
 }
 
-/* List views (collections, folders, versions): the table is a rounded card in
-   the content column. Payload stretches these tables past the gutter to the
-   page edge (negative left, extra width, padding and an ::after spacer); that
-   bleed is undone. Payload's overflow: auto stays, for horizontal scroll, and
-   also clips the header background to the card's corners. */
+/* List views (collections, folders, versions): the table is a rounded glass card
+   in the content column, with the sheen and rim the other panels carry. Payload
+   stretches these tables past the gutter to the page edge (negative left, extra
+   width, padding and an ::after spacer); that bleed is undone. Payload's
+   overflow: auto stays, for horizontal scroll, and also clips the header
+   background to the card's corners — the sheen is painted on the card itself,
+   which does not scroll with it.
+   No backdrop-filter: the card sits on the content sheet, which is already a
+   blurred surface, so a nested blur would only sample the sheet's own fill. */
 :is(.collection-list, .collection-folder-list, .folder-list, .versions) .table {
   left: 0;
   width: 100%;
   padding-left: 0;
-  background: var(--cms-glass-card);
+  background-color: var(--cms-glass-card);
+  background-image: var(--cms-glass-sheen);
   border: 1px solid var(--cms-glass-line);
   border-radius: 12px;
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-sm);
 }
 
 :is(.collection-list, .collection-folder-list, .folder-list, .versions) .table::after {
@@ -2127,6 +2164,42 @@ html[data-theme='dark'] .confirmation-modal {
   --cms-action-icon: var(--cms-icon-trash);
 }
 
+/* ---- Dropdowns ----------------------------------------------------------------- */
+/* Every popup menu: the doc controls "…", the per-page picker, the column and
+   sort pickers, the create-new split button. Payload draws .popup__content as a
+   flat --theme-input-bg panel with a CSS-triangle caret pointing at the trigger.
+   The panel becomes glass; the caret goes, because it is a triangle made of
+   border colours — it cannot blur or take a sheen with the panel, so it would
+   sit beside it as the one opaque piece. Its 10px offset is what positions the
+   panel, so hiding it leaves that as the gap and the menu still reads as
+   attached to its button. */
+.popup__content {
+  --popup-button-highlight: var(--cms-glass-tint);
+
+  background-color: var(--cms-glass-sheet);
+  background-image: var(--cms-glass-sheen);
+  border: 1px solid var(--cms-glass-line);
+  border-radius: var(--style-radius-l);
+  box-shadow: var(--cms-glass-rim), var(--cms-shadow-md), var(--cms-glass-shadow);
+  -webkit-backdrop-filter: var(--cms-glass-blur);
+  backdrop-filter: var(--cms-glass-blur);
+}
+
+.popup__caret {
+  display: none;
+}
+
+/* Rows: the panel's corner, minus its padding, and the same tint-on-hover as
+   every other glass row. */
+.popup-button-list__button {
+  border-radius: var(--style-radius-m);
+  transition: background-color var(--cms-dur) var(--cms-ease);
+}
+
+.popup-button-list__button--selected {
+  background-color: var(--cms-nav-active);
+}
+
 /* ---- Not found ----------------------------------------------------------------- */
 /* Payload's 404 is a short left-aligned card at the top of the view. It gets the
    whole sheet instead: the content centred in a box tall enough to fill what is
@@ -2173,6 +2246,7 @@ html[data-theme='dark'] .confirmation-modal {
    a tinted card that ends with its content. */
 .template-default__wrap > .query-inspector {
   padding-block-start: var(--base);
+  padding-block-end: 24px;
   padding-inline-end: var(--gutter-h);
 }
 

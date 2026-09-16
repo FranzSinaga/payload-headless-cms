@@ -34,6 +34,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     components: {
+      actions: [{ path: 'src/components/HeaderClock/index.tsx#HeaderClock' }],
       beforeLogin: [{ path: 'src/components/BeforeLogin/index.tsx#BeforeLogin' }],
       afterLogin: [{ path: 'src/components/PasswordToggle/index.tsx#PasswordToggle' }],
       beforeNavLinks: [{ path: 'src/components/NavHome/index.tsx#NavHome' }],
